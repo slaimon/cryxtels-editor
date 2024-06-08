@@ -10,11 +10,11 @@ const reservedKeywords = [
     "model",
     "endpixel",
     "detail",
-    "associatedfile",
-    "totalmass",
+    "associated file",
+    "total mass",
     "dot",
     "sphere",
-    "dottedellipse",
+    "dotted ellipse",
     "asterisk",
     "line",
     "rectangle",
@@ -86,8 +86,8 @@ function apply(mesh, command) {
         case "type":
         case "model":
         case "detail":
-        case "associatedfile":
-        case "totalmass": {
+        case "associated file":
+        case "total mass": {
             break;
         }
 
@@ -108,7 +108,7 @@ function apply(mesh, command) {
             checkParams(command, 6);
             break;
         }
-        case "dottedellipse": {
+        case "dotted ellipse": {
             checkParams(command, 7);
             break;
         }
@@ -227,7 +227,15 @@ function apply(mesh, command) {
             break;
         }
         case "text": {
-            // TODO
+            checkParams(command, 8);
+            let c = [command[1], command[2], command[3]];
+            let scale_x = command[4];
+            let scale_y = command[5];
+            let alpha = command[6];
+            let beta = command[7];
+            let str = command[8];
+
+            mesh.text(str, c, scale_x, scale_y, alpha, beta);
             break;
         }
 
@@ -288,16 +296,19 @@ function parse(txt) {
             line = line.replace(variable, environment[variable]);
         }
 
-        // now we can remove whitespace since we're using commas as separators
+        // all the other keywords use commas as separator
         command = line
-            .replace(/[\s;]/g,"")
+            .replace(";","")
             .split(",")
             .filter(x => x.length > 0)
             .map( s => {
+                if (s[0]===" ") {
+                    s = s.slice(1);             // remove leading whitespace
+                }
                 let x = Number(s);
-                return (isNaN(x)) ? (s) : (x);
+                return (isNaN(x)) ? (s) : (x);  // convert digit strings into numbers
             });
-
+        
         if (apply(mesh, command)) {
             return mesh;
         }
