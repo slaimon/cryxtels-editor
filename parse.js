@@ -54,8 +54,8 @@ function checkParams(params, arity) {
     }
 }
 
-function isAllowedVariableName(name) {
-    if (name.match(allowedVariableNameRegex).length == 0) {
+function checkIfAllowedVariableName(name) {
+    if (!name.match(allowedVariableNameRegex)) {
         throw new Error(`Syntax error: invalid variable name "${name}" (line ${line_number})`)
     }
     if (reservedKeywords.includes(name)) {
@@ -265,7 +265,8 @@ function parse(txt) {
         // these keywords are the only ones that use whitespace as separator
         let command = line
         .replace(/[,;]/g, "")
-        .split(" ");
+        .split(" ")
+        .filter(x => x.length > 0);
         switch (command[0].toLowerCase()) {
             case "type":
             case "model":
@@ -275,10 +276,16 @@ function parse(txt) {
                 continue;
             }
             case "define": {
-                if (isAllowedVariableName(command[1])) {
+                if (checkIfAllowedVariableName(command[1])) {
                     environment[command[1]] = command[2];
+                    continue;
                 }
             }
+        }
+
+        // macro expansion
+        for (let variable in environment) {
+            line = line.replace(variable, environment[variable]);
         }
 
         // now we can remove whitespace since we're using commas as separators
@@ -290,7 +297,6 @@ function parse(txt) {
                 let x = Number(s);
                 return (isNaN(x)) ? (s) : (x);
             });
-
 
         if (apply(mesh, command)) {
             return mesh;
