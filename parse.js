@@ -309,6 +309,7 @@ function parse(txt) {
                 return (isNaN(x)) ? (s) : (x);  // convert digit strings into numbers
             });
         
+            console.log(command);
         if (apply(mesh, command)) {
             return mesh;
         }

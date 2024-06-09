@@ -1,5 +1,18 @@
 export {Mesh}
 
+/*
+    Many of the primitives have a lot of duplicated code and I'd love nothing more than to simplify them,
+    but I'm not good enough at geometry and at decoding arcane pseudo-assembly C++ code :)
+
+    I'm especially talking about the plane orientation of grids, spirals and ellipses.
+    I tried to use reflections and translations but the result was disastrous lol, it would've gone better
+    if I was able to iterate more quickly but right now I don't have a renderer and I need to copy-paste
+    the .obj files from the console to an online 3d viewer and it's soooo sloooow
+
+    So for now I'm copying the very verbose code from the original, where it gives the formulas explicitly
+    on a case-by-case basis. I suppose a switch-case was faster than doing transformations.
+*/
+
 const sw_version = "cryxtels2obj v0.3";
 const validChars = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`";
 
@@ -289,57 +302,137 @@ class Mesh {
         if ( tiles < 0 )
             throw new Error(`GRID ERROR: invalid argument tiles = ${tiles}`);
         
-        function gridXY (mesh) {
-            c[0] -= (tiles*width) / 2;
-            c[1] -= (tiles*height)/ 2;
-            
-            let c_0 = c[0];
-            let p = c[1] + tiles*height;
-            for(let a=0; a<=tiles; a++) {
-                mesh.line([c[0], c[1], c[2]],
-                          [c[0], p   , c[2]]);
-                c[0] += width;
+        let mesh = new Mesh();
+        switch (plane) {
+            case "xy": {
+                c[0] -= (tiles*width) / 2;
+                c[1] -= (tiles*height)/ 2;
+                
+                let c_0 = c[0];
+                let p   = c[1] + tiles*height;
+                for(let a=0; a<=tiles; a++) {
+                    mesh.line([c[0], c[1], c[2]],
+                              [c[0], p   , c[2]]);
+                    c[0] += width;
+                }
+                c[0] = c_0;
+                p    = c[0] + tiles*width;
+                for(let a=0; a<=tiles; a++) {
+                    mesh.line([c[0], c[1], c[2]],
+                              [p   , c[1], c[2]]);
+                    c[1] += height;
+                }
+                break;
             }
-            c[0] = c_0;
-            p = c[0] + tiles*width;
-            for(let a=0; a<=tiles; a++) {
-                mesh.line([c[0], c[1], c[2]],
-                          [p   , c[1], c[2]]);
-                c[1] += height;
+            case "xz": {
+                c[0] -= (tiles*width) / 2;
+                c[2] -= (tiles*height) / 2;
+    
+                let c_0 = c[0];
+                let p   = c[2] + tiles*height;
+                for (let a=0; a<=tiles; a++) {
+                    mesh.line([c[0], c[1], c[2]],
+                              [c[0], c[1], p   ]);
+                    c[0] += width;
+                }
+                c[0] = c_0;
+                p    = c[0] + tiles*width;
+                for (let a=0; a<=tiles; a++) {
+                    mesh.line([c[0], c[1], c[2]], 
+                              [p   , c[1], c[2]]);
+                    c[2] += height;
+                }
+                break;
+            }
+            case "yz": {
+                c[2] -= (tiles*width) / 2;
+                c[1] -= (tiles*height) / 2;
+
+                let c_2 = c[2];
+                let p   = c[1] + tiles*height;
+                for (a=0; a<=tiles; a++) {
+                    mesh.line([c[0], c[1], c[2]],
+                              [c[0], p   , c[2]]);
+                    c[2] += width;
+                }
+                c[2] = c_2;
+                p    = c[2] + tiles*width;
+                for (a=0; a<=tiles; a++) {
+                    mesh.line([c[0], c[1], c[2]],
+                              [c[0], c[1], p   ]);
+                    c[1] += height;
+                }
+            }
+            default: {
+                throw new Error(`GRID ERROR: Invalid plane "${plane}"`);
             }
         }
-        
-        let g = orientNewPrimitive(gridXY, plane, "grid");
-        this.merge(g);
+
+        mesh.flatten("grid");
+        this.merge(mesh);
     }
 
     // alias SPIRALE
     // the number n of vertices in the spiral is n = 1080/step - 1
     // the radius of the spiral is R = increment*n
     spiral (c, increment, plane, step) {
+        if (step<=0) {
+            throw new Error(`SPIRAL ERROR: Invalid argument step = ${step}`);
+        }
+        let a = step;
+        let k0 = 0;
+        let k1 = increment;
+        let crx = step;
+        let cry = 0;
 
-        function spiralXY (mesh) {
-            let a = step;
-            let k0 = 0;
-            let k1 = increment;
-            let crx = step;
-            let cry = 0;
-            while (a<1080) {
-                // I had to introduce the k0 variable to fix a "bug" (?) in the original code
-                // where the spirals weren't continuous (or maybe they weren't intended to be?)
-                // to reinstate the old spirals, just replace k0 with k1 in the following formula
-                mesh.line([c[0]+k1*tcos(crx), c[1]+k1*tsin(crx), c[2]],
-                          [c[0]+k0*tcos(cry), c[1]+k0*tsin(cry), c[2]]);
-                cry = crx;
-                crx = (crx + step) % 360;
-                k0 = k1;
-                k1 += increment;
-                a += step;
+        let mesh = new Mesh()
+        switch (plane) {
+            case "xy": {
+                while (a<1080) {
+                    // I had to introduce the k0 variable to fix a "bug" (?) in the original code
+                    // where the segments weren't adjacent (or maybe they weren't intended to be?)
+                    // to reinstate the old spirals, just replace k0 with k1 in the following formula
+                    mesh.line([c[0]+k1*tcos(crx), c[1]+k1*tsin(crx), c[2]],
+                              [c[0]+k0*tcos(cry), c[1]+k0*tsin(cry), c[2]]);
+                    cry = crx;
+                    crx = (crx + step) % 360;
+                    k0 = k1;
+                    k1 += increment;
+                    a += step;
+                }
+                break;
+            }
+            case "xz": {
+                while (a<1080) {
+                    mesh.line([c[0]+k1*tcos(crx), c[1], c[2]+k1*tsin(crx)],
+                              [c[0]+k0*tcos(cry), c[1], c[2]+k0*tsin(cry)]);
+                    cry = crx;
+                    crx = (crx + step) % 360;
+                    k0 = k1;
+                    k1 += increment;
+                    a += step;
+                }
+                break;
+            }
+            case "yz": {
+                while (a<1080) {
+                    mesh.line([c[0], c[1]+k1*tcos(crx), c[2]+k1*tsin(crx)],
+                              [c[0], c[1]+k0*tcos(cry), c[2]+k0*tsin(cry)]);
+                    cry = crx;
+                    crx = (crx + step) % 360;
+                    k0 = k1;
+                    k1 += increment;
+                    a += step;
+                }
+                break;
+            }
+            default: {
+                throw new Error(`SPIRAL ERROR: Invalid plane "${plane}"`);
             }
         }
 
-        let s = orientNewPrimitive(spiralXY, plane, "spiral");
-        this.merge(s);
+        mesh.flatten("spiral");
+        this.merge(mesh);
     }
 
     // alias ELLISSE
@@ -350,23 +443,56 @@ class Mesh {
         }
         if (step > 90)
             step = 90;
-
-        function ellipseXY(mesh) {
-            let crx, cry;
-            let ux = c[0] + width;
-            let uy = c[1];
-            for (let i=step; i<360; i+=step) {
-                crx = c[0] + width*tcos(i);
-                cry = c[1] + height*tsin(i);
-                mesh.line([ux, uy, c[2]], [crx, cry, c[2]]);
-                ux = crx;
-                uy = cry;
+        
+        let crx, cry, crz;
+        let mesh = new Mesh();
+        switch (plane) {
+            case "xy": {
+                let ux = c[0] + width;
+                let uy = c[1];
+                for (let i=step; i<360; i+=step) {
+                    crx = c[0] + width*tcos(i);
+                    cry = c[1] + height*tsin(i);
+                    mesh.line([ux, uy, c[2]], [crx, cry, c[2]]);
+                    ux = crx;
+                    uy = cry;
+                }
+                mesh.line([ux, uy, c[2]], [c[0]+width, c[1], c[2]]);
+                break;
             }
-            mesh.line([ux, uy, c[2]], [c[0]+width, c[1], c[2]]);
+            case "xz": {
+                let ux = c[0] + width;
+                let uz = c[2];
+                for (let i=step; i<360; i+=step) {
+                    crx = c[0] + width*tcos(i);
+                    crz = c[2] + height*tsin(i);
+                    mesh.line([ux, c[1], uz], [crx, c[1], crz]);
+                    ux = crx;
+                    uz = crz;
+                }
+                mesh.line([ux, c[1], uz], [c[0]+width, c[1], c[2]]);
+                break;
+            }
+            case "yz": {
+                let uy = c[1] + width;
+                let uz = c[2];
+                for (let i=step; i<360; i+=step) {
+                    cry = c[1] + width*tcos(i);
+                    crz = c[2] + height*tsin(i);
+                    mesh.line([c[0], uy, uz], [c[0], cry, crz]);
+                    uy = cry;
+                    uz = crz;
+                }
+                mesh.line([c[0], uy, uz], [c[0], c[1]+width, c[2]]);
+                break;
+            }
+            default: {
+                throw new Error(`ELLIPSE ERROR: Invalid plane "${plane}"`);
+            }
         }
 
-        let e = orientNewPrimitive(ellipseXY,plane,"ellipse");
-        this.merge(e);
+        mesh.flatten("ellipse");
+        this.merge(mesh);
     }
 
     // alias SFERA_RETICOLARE
@@ -450,25 +576,57 @@ class Mesh {
     wave(c, scale, amplitude, plane, step) {
         if (step > 90)
             step = 90;
+        let ux, uy, uz;
+        let ox, oy, oz;
 
-        function waveXY (mesh) {
-            let  x = c[0] - scale*180 + step*scale;
-            let oy = c[1];
-            let ox = x - step*scale;
-            let y;
-            for (let i=step; i<=360; i+=step) {
-                y = c[1] + tsin(i) * amplitude;
-                mesh.line([x, y, c[2]], [ox, oy, c[2]]);
-                oy = y;
-                ox = x;
-                x += step*scale;
+        let mesh = new Mesh();
+        switch (plane) {
+            case "xy": {
+                ux = c[0] - scale*180 + step*scale;
+                oy = c[1];
+                ox = ux - step*scale;
+                for (let i=step; i<=360; i+=step) {
+                    uy = c[1] + tsin(i) * amplitude;
+                    mesh.line([ux, uy, c[2]], [ox, oy, c[2]]);
+                    oy = uy;
+                    ox = ux;
+                    ux += step*scale;
+                }
+                break;
+            }
+            case "xz": {
+                uz = c[2] - scale*180 + step*scale;
+                ox = c[0];
+                oz = uz - step*scale;
+                for (let i=step; i<=360; i+=step) {
+                    ux = tsin(i) * amplitude;
+                    mesh.line([ux, c[1], uz], [ox, c[1], oz]);
+                    ox = ux;
+                    oz = uz;
+                    uz += step*scale;
+                }
+                break;
+            }
+            case "yz": {
+                uz = c[2] - scale*180 + step*scale;
+                oy = c[1];
+                oz = uz - step*scale;
+                for (let i=step; i<=360; i+=step) {
+                    uy = c[1] + tsin(i) * amplitude;
+                    mesh.line([c[0], uy, uz], [c[0], oy, oz]);
+                    oy = uy;
+                    oz = uz;
+                    uz += step*scale;
+                }
+                break;
+            }
+            default: {
+                throw new Error(`WAVE ERROR: Invalid plane "${plane}"`);
             }
         }
 
-        let w = orientNewPrimitive(waveXY, plane, "wave");
-        w.translate(c);
-        w.flatten("wave");
-        this.merge(w);
+        mesh.flatten("wave");
+        this.merge(mesh);
     }
 
     // alias COLONNA
