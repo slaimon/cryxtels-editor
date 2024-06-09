@@ -610,9 +610,11 @@ class Mesh {
 
 /* ------------ HELPER FUNCTIONS ------------ */
 
+//  note i replace the underscore with a space. i don't know how, but the game always replaces underscores with spaces.
+//  meanwhile if i use them here they get replaced with carets '^', and i don't know the reason for this either.
 function prepareValidString(str) {
     // we replace all unsupported chars with whitespace, as in the original
-    str = str.toUpperCase();
+    str = str.toUpperCase().replaceAll("_", " ");
     for (let char of str) {
         if (validChars.indexOf(char) === -1) {
             console.log(`Warning: unsupported character '${char}', skipping`);

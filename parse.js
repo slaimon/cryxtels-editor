@@ -233,7 +233,7 @@ function apply(mesh, command) {
             let scale_y = command[5];
             let alpha = command[6];
             let beta = command[7];
-            let str = command[8];
+            let str = command[8].toString();
 
             mesh.text(str, c, scale_x, scale_y, alpha, beta);
             break;
