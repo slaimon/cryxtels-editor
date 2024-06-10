@@ -125,8 +125,10 @@ class Mesh {
     flatten (name="combination") {
         let v = [];
         let l = [];
+        let d = [];
         let vlen = 0;
         for (let primitive of this.primitives) {
+            d = d.concat(primitive.dots);
             v = v.concat(primitive.vertices);
             for (let line of primitive.lines) {
                 l.push(line.map(x=>x+vlen));
@@ -136,7 +138,8 @@ class Mesh {
         this.primitives = [{
             type: name,
             vertices: v,
-            lines: l
+            lines: l,
+            dots: d
         }];
     }
 
@@ -158,6 +161,16 @@ class Mesh {
                 vlist.push(v_new);
             }
             primitive.vertices = vlist;
+
+            let dlist = [];
+            for (let d of primitive.dots) {
+                let d_new = Array(3);
+                for(let i=0; i<3; i++) {
+                    d_new[i] = d[i] + vector[i];
+                }
+                dlist.push(d_new);
+            }
+            primitive.dots = dlist;
         }
     }
 
@@ -201,7 +214,18 @@ class Mesh {
         this.primitives.push({
             type:"link",
             vertices:v,
-            lines:l
+            lines:l,
+            dots: []
+        });
+    }
+
+    // alias PUNTO
+    dot (c) {
+        this.primitives.push({
+            type: "dot",
+            vertices: [],
+            lines: [],
+            dots: [c]
         });
     }
 
@@ -210,7 +234,8 @@ class Mesh {
         this.primitives.push({
             type: "line",
             vertices: [start, end],
-            lines: [[1, 2]]
+            lines: [[1, 2]],
+            dots: []
         });
     }
 
@@ -250,7 +275,8 @@ class Mesh {
         this.primitives.push({
             type: "rect",
             vertices: v,
-            lines: [l]
+            lines: [l],
+            dots: []
         });
     }
 
@@ -350,18 +376,19 @@ class Mesh {
 
                 let c_2 = c[2];
                 let p   = c[1] + tiles*height;
-                for (a=0; a<=tiles; a++) {
+                for (let a=0; a<=tiles; a++) {
                     mesh.line([c[0], c[1], c[2]],
                               [c[0], p   , c[2]]);
                     c[2] += width;
                 }
                 c[2] = c_2;
                 p    = c[2] + tiles*width;
-                for (a=0; a<=tiles; a++) {
+                for (let a=0; a<=tiles; a++) {
                     mesh.line([c[0], c[1], c[2]],
                               [c[0], c[1], p   ]);
                     c[1] += height;
                 }
+                break;
             }
             default: {
                 throw new Error(`GRID ERROR: Invalid plane "${plane}"`);
@@ -495,14 +522,76 @@ class Mesh {
         this.merge(mesh);
     }
 
+    // alias DISEGNO_ELLITTICO, DOTTED_ELLIPSE
+    dotellipse (c, width, height, plane, step) {
+        if (step <= 0) {
+            throw new Error(`DOTELLIPSE ERROR: Invalid argument step = ${step}`);
+        }
+        if (step > 90)
+            step = 90;
+
+        let e = new Mesh(); 
+        switch (plane) {
+            case "xy": {
+                for (let i=0; i<360; i+=step)
+                    e.dot([width*tcos(i), height*tsin(i), 0]);
+                break;
+            }
+            case "xz": {
+                for (let i=0; i<360; i+=step)
+                    e.dot([width*tcos(i), 0, height*tsin(i)]);
+                break;
+            }
+            case "yz": {
+                for (let i=0; i<360; i+=step)
+                    e.dot([0, height*tsin(i), width*tcos(i)]);
+                break;
+            }
+        }
+
+        e.flatten("dotellipse");
+        e.translate(c);
+        this.merge(e);
+    }
+
+    // alias SFERA, SPHERE
+    dotsphere (c, radius, ratio, step) {
+        if (step <= 0) {
+            throw new Error(`DOTSPHERE ERROR: Invalid argument step = ${step}`);
+        }
+        if (step > 90)
+            step = 90;
+
+        let dots = [];
+        radius = -radius;
+        let ox, oy, oz, z2;
+        for (let a=0; a<360; a+=step) {
+            for (let b=step; b<180; b+=step) {
+                oz = radius * tcos(b) * ratio;
+                z2 = radius * tsin(b);
+                ox = z2 * tcos(a);
+                oy = z2 * tsin(a);
+                dots.push([ox+c[0], oz+c[1], c[2]-oy]);
+            }
+        }
+
+        this.primitives.push({
+            type:"dotsphere",
+            vertices: [],
+            lines: [],
+            dots: dots
+        });
+    }
+
     // alias SFERA_RETICOLARE
     gridsphere (c, radius, ratio, step) {
         if (step <= 0) {
             throw new Error(`GRIDSPHERE ERROR: Invalid argument step = ${step}`);
         }
-        let s = new Mesh();
         if (step > 90)
             step = 90;
+
+        let s = new Mesh();
 
         radius = -radius;
         let first_x, first_y, first_z;
@@ -534,7 +623,7 @@ class Mesh {
     // alias CIAMBELLA, DONUT
     // Syntax: DONUT, X, Y, Z, RADIUS, SECTION, PLANE, STEP;
     // the original documentation omits the PLANE argument
-    torus(c, radius, section, plane, step) {
+    torus (c, radius, section, plane, step) {
         if(step > 90)
             step = 90;
 
@@ -573,7 +662,7 @@ class Mesh {
     }
 
     // alias ONDA
-    wave(c, scale, amplitude, plane, step) {
+    wave (c, scale, amplitude, plane, step) {
         if (step > 90)
             step = 90;
         let ux, uy, uz;
@@ -631,7 +720,7 @@ class Mesh {
 
     // alias COLONNA
     // Syntax: COLUMN, X, Y, Z, BASE RADIUS, TIP RADIUS, HEIGHT, STEP;
-    column(c, base_radius, top_radius, height, step) {
+    column (c, base_radius, top_radius, height, step) {
         let m = new Mesh();
 
         if (step <= 0) {
@@ -739,7 +828,7 @@ class Mesh {
     }
 
     // generate the .obj file for the mesh
-    print() {
+    print () {
         let obj = `# generated with ${sw_version} by Simone Bertolucci\n`;
         if (this.author !== undefined) {
             obj += `# this pixel was created by ${this.author}\n`;
@@ -749,7 +838,7 @@ class Mesh {
         this.flatten(this.name);
         this.removeDuplicateVertices();
         let p = this.primitives[0];
-        for (let v of p.vertices) {
+        for (let v of p.vertices.concat(p.dots)) {
             obj += `v ${v[0]} ${v[1]} ${v[2]}`;
             obj += "\n";
         }

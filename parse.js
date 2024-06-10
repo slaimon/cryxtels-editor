@@ -99,17 +99,33 @@ function apply(mesh, command) {
             break;
         }
 
-        // dotted primitives, still unimplemented because they wouldn't render anyway
+        // dot primitives
         case "dot": {
             checkParams(command, 3);
+            let c = [command[1], command[2], command[3]];
+            
+            mesh.dot(c);
             break;
         }
         case "sphere": {
             checkParams(command, 6);
+            let c = [command[1], command[2], command[3]];
+            let radius = command[4];
+            let ratio = command[5];
+            let step = command[6];
+
+            mesh.dotsphere(c, radius, ratio, step);
             break;
         }
         case "dotted ellipse": {
             checkParams(command, 7);
+            let c = [command[1], command[2], command[3]];
+            let width = command[4];
+            let height = command[5];
+            let plane = getOrientation(command[6]);
+            let step = command[7];
+
+            mesh.dotellipse(c, width, height, plane, step);
             break;
         }
 
@@ -216,14 +232,16 @@ function apply(mesh, command) {
             mesh.gridsphere(c, radius, ratio, step);
             break;
         }
+        case "donut":
         case "torus": {
-            checkParams(command, 6);
+            checkParams(command, 7);
             let c = [command[1], command[2], command[3]];
             let radius = command[4];
             let section = command[5];
-            let step = command[6];
+            let plane = getOrientation(command[6]);
+            let step = command[7];
 
-            mesh.torus(c, radius, section, step);
+            mesh.torus(c, radius, section, plane, step);
             break;
         }
         case "text": {
