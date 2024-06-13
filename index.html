@@ -29,11 +29,11 @@
 </body>
 <script type="module">
     import { parse } from "./parse.js"
-    import { Mesh } from "./mesh.js"
+    import { Pixel } from "./pixel.js"
 
     function send() {
         let mesh = parse(textarea.value);
-        console.log(mesh.print());
+        console.log(mesh.toObjString());
     }
 
     const textarea = document.getElementById("textarea");

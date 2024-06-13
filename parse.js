@@ -1,5 +1,7 @@
 export {parse}
-import {Mesh} from "./mesh.js"
+import * as Primitives from "./primitives.js"
+import {Text} from "./text.js"
+import {Pixel} from "./pixel.js"
 
 const allowedVariableNameRegex = /[a-zA-Z_][0-9a-zA-Z_]*/;
 const reservedKeywords = [
@@ -78,7 +80,7 @@ function getOrientation(i) {
     }
 }
 
-function apply(mesh, command) {
+function applyCommand(pixel, command) {
     switch(command[0].toLowerCase()) {
 
         // unimplemented commands
@@ -95,7 +97,7 @@ function apply(mesh, command) {
             if (command[1] !== "=") {
                 throw new Error(`Syntax error: unexpected token ${command[1]}, expected '=' (line ${line_number})`);
             }
-            mesh.setAuthor(command[2]);
+            pixel.setAuthor(command[2]);
             break;
         }
 
@@ -104,7 +106,7 @@ function apply(mesh, command) {
             checkParams(command, 3);
             let c = [command[1], command[2], command[3]];
             
-            mesh.dot(c);
+            pixel.Add(new Primitives.Dot(c));
             break;
         }
         case "sphere": {
@@ -114,7 +116,7 @@ function apply(mesh, command) {
             let ratio = command[5];
             let step = command[6];
 
-            mesh.dotsphere(c, radius, ratio, step);
+            pixel.Add(new Primitives.DotSphere(c, radius, ratio, step));
             break;
         }
         case "dotted ellipse": {
@@ -125,18 +127,18 @@ function apply(mesh, command) {
             let plane = getOrientation(command[6]);
             let step = command[7];
 
-            mesh.dotellipse(c, width, height, plane, step);
+            pixel.Add(new Primitives.DotEllipse(c, width, height, plane, step));
             break;
         }
 
-        // mesh primitives
+        // pixel primitives
         case "asterisk": {
             checkParams(command, 5);
             let c = [command[1], command[2], command[3]];
             let radius = command[4];
             let step = command[5];
 
-            mesh.asterisk(c, radius, step);
+            pixel.Add(new Primitives.Asterisk(c, radius, step));
             break;
         }
         case "line": {
@@ -144,7 +146,7 @@ function apply(mesh, command) {
             let start = [command[1], command[2], command[3]];
             let end = [command[4], command[5], command[6]];
 
-            mesh.line(start, end);
+            pixel.Add(new Primitives.Line(start, end));
             break;
         }
         case "rectangle": {
@@ -154,7 +156,7 @@ function apply(mesh, command) {
             let height = command[5];
             let plane = getOrientation(command[6]);
 
-            mesh.rect(c, width, height, plane);
+            pixel.Add(new Primitives.Rectangle(c, width, height, plane));
             break;
         }
         case "solidbox":
@@ -165,7 +167,7 @@ function apply(mesh, command) {
             let hy = command[5];
             let hz = command[6];
 
-            mesh.box(c, hx, hy, hz);
+            pixel.Add(new Primitives.Box(c, hx, hy, hz));
             break;
         }
         case "grid": {
@@ -176,7 +178,7 @@ function apply(mesh, command) {
             let steps = command[6];
             let plane = getOrientation(command[7]);
 
-            mesh.grid(c, width, height, steps, plane);
+            pixel.Add(new Primitives.Grid(c, width, height, steps, plane));
             break;
         }
         case "ellipse": {
@@ -187,7 +189,7 @@ function apply(mesh, command) {
             let plane = getOrientation(command[6]);
             let step = command[7];
 
-            mesh.ellipse(c, width, height, plane, step);
+            pixel.Add(new Primitives.Ellipse(c, width, height, plane, step));
             break;
         }
         case "spiral": {
@@ -197,7 +199,7 @@ function apply(mesh, command) {
             let plane = getOrientation(command[5]);
             let step = command[6];
 
-            mesh.spiral(c, increment, plane, step);
+            pixel.Add(new Primitives.Spiral(c, increment, plane, step));
             break;
         }
         case "wave": {
@@ -208,7 +210,7 @@ function apply(mesh, command) {
             let plane = getOrientation(command[6]);
             let step = command[7];
 
-            mesh.wave(c, scale, amplitude, plane, step);
+            pixel.Add(new Primitives.Wave(c, scale, amplitude, plane, step));
             break;
         }
         case "column": {
@@ -219,7 +221,7 @@ function apply(mesh, command) {
             let height = command[6];
             let step = command[7];
 
-            mesh.column(c, base_radius, top_radius, height, step);
+            pixel.Add(new Primitives.Column(c, base_radius, top_radius, height, step));
             break;
         }
         case "gridsphere": {
@@ -229,7 +231,7 @@ function apply(mesh, command) {
             let ratio = command[5];
             let step = command[6];
 
-            mesh.gridsphere(c, radius, ratio, step);
+            pixel.Add(new Primitives.GridSphere(c, radius, ratio, step));
             break;
         }
         case "donut":
@@ -241,7 +243,7 @@ function apply(mesh, command) {
             let plane = getOrientation(command[6]);
             let step = command[7];
 
-            mesh.torus(c, radius, section, plane, step);
+            pixel.Add(new Primitives.Torus(c, radius, section, plane, step));
             break;
         }
         case "text": {
@@ -253,12 +255,12 @@ function apply(mesh, command) {
             let beta = command[7];
             let str = command[8].toString();
 
-            mesh.text(str, c, scale_x, scale_y, alpha, beta);
+            pixel.Add(new Text(str, c, scale_x, scale_y, alpha, beta));
             break;
         }
 
         // collision primitives, could be interesting to extend this in the future
-        // should add solidbox to these because it creates a collision block AND a mesh
+        // should add solidbox to these because it creates a collision block AND a pixel
         case "dock":
         case "collision":
         case "collisionhigh":
@@ -278,7 +280,7 @@ function apply(mesh, command) {
 }
 
 function parse(txt) {
-    let mesh = new Mesh();
+    let pixel = new Pixel();
 
     let lines = txt.split("\n");
     for (let line of lines) {
@@ -298,7 +300,7 @@ function parse(txt) {
             case "model":
             case "seed":
             case "author": {
-                apply(mesh,command);
+                applyCommand(pixel,command);
                 continue;
             }
             case "define": {
@@ -328,10 +330,10 @@ function parse(txt) {
             });
         
             console.log(command);
-        if (apply(mesh, command)) {
-            return mesh;
+        if (applyCommand(pixel, command)) {
+            return pixel;
         }
     }
 
-    return mesh;
+    return pixel;
 }
