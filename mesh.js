@@ -623,42 +623,59 @@ class Mesh {
     // alias CIAMBELLA, DONUT
     // Syntax: DONUT, X, Y, Z, RADIUS, SECTION, PLANE, STEP;
     // the original documentation omits the PLANE argument
+    // TODO I'm still unsure whether this actually works for all orientations and centers 
     torus (c, radius, section, plane, step) {
         if(step > 90)
             step = 90;
 
-        function torusXY (mesh) {
-            let first_x, first_y, first_z;
-            let crx, cry, crz;
-            let ux, uy;
+        let mesh = new Mesh();
+        
+        switch (plane) {
+            case "yx": case "xy":
+            case "xz": case "zx":
+            case "zy": case "yz": {
+                let first_x, first_y, first_z;
+                let crx, cry, crz;
+                let ux, uy;
 
-            for (let a=step; a<360+step; a+=step) {
-                first_x = (section-radius)*tcos(a);
-                first_z = (radius-section)*tsin(a);
-                first_y = 0;
-                cry = first_x;
-                for (let i=step; i<360; i+=step*2) {
-                    ux = tcos(i)*section - radius;
-                    uy = tsin(i)*section;
-                    crx =  ux*tcos(a);
-                    crz = -ux*tsin(a);
+                for (let a=step; a<360+step; a+=step) {
+                    first_x = (section-radius)*tcos(a);
+                    first_z = (radius-section)*tsin(a);
+                    first_y = 0;
+                    cry = first_x;
+                    for (let i=step; i<360; i+=step*2) {
+                        ux = tcos(i)*section - radius;
+                        uy = tsin(i)*section;
+                        crx =  ux*tcos(a);
+                        crz = -ux*tsin(a);
+                        mesh.line([crx, crz, uy],
+                                  [first_x, first_z, first_y]);
+                        first_x = crx;
+                        first_y =  uy;
+                        first_z = crz;
+                        mesh.line([crx, crz, uy],
+                                  [ux*tcos(a-step), -ux*tsin(a-step), uy]);
+                    }
                     mesh.line([crx, crz, uy],
-                              [first_x, first_z, first_y]);
-                    first_x = crx;
-                    first_y =  uy;
-                    first_z = crz;
-                    mesh.line([crx, crz, uy],
-                              [ux*tcos(a-step), -ux*tsin(a-step), uy]);
+                              [cry, (radius-section)*tsin(a), 0]);
                 }
-                mesh.line([crx, crz, uy],
-                          [cry, (radius-section)*tsin(a), 0]);
+                break;
+            }
+            default: {
+                  throw new Error(`TORUS ERROR: Invalid plane "${plane}"`);  
             }
         }
+        if (plane === "xz" || plane === "zx") {
+            mesh.reflect(2, 1);
+        }
+        else if (plane === "yz" || plane === "zy") {
+            mesh.reflect(0,2);
+            mesh.reflect(1,2);
+        }
+        mesh.translate(c);
+        mesh.flatten("torus");
 
-        let t = orientNewPrimitive(torusXY, plane, "torus");
-        t.translate(c);
-        t.flatten("torus");
-        this.merge(t);
+        this.merge(mesh);
     }
 
     // alias ONDA
@@ -885,30 +902,6 @@ function tcos(x) {
         console.log(`TCOS WARNING: non-legacy argument ${x}`);
     }
     return Math.cos(x*Math.PI/180);
-}
-
-function orientNewPrimitive(builderXY, plane, primitiveName) {
-    let p = new Mesh();
-    switch(plane) {
-        case "xz": case "zx":
-        case "yz": case "zy":
-        case "xy": case "yx": {
-            builderXY(p);
-            break;
-        }
-        default: {
-            throw new Error(`${primitiveName.toUpperCase()} ERROR: Invalid plane \"${plane}\"`);
-        }
-    }
-    if (plane === "xz" || plane === "zx") {
-        p.reflect(2, 1);
-    }
-    else if (plane === "yz" || plane === "zy") {
-        p.reflect(0,2);
-        p.reflect(1,2);
-    }
-    p.flatten(primitiveName);
-    return p;
 }
 
 function verticesAreEqual (a, b) {
