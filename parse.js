@@ -42,14 +42,14 @@ var environment = {};
 
 // commands can have an extra parameter at the end, as a treat ehrm I mean, as a comment
 // for instance (from PIXELS.DEF): "asterisk, 75, -100, -100, 3, 36, gratuitus use of meaningless decoration;"
-function checkParams(params, arity) {
-    if (params.length-1 < arity) {
-        throw new Error(`Syntax error: not enough parameters given (line ${line_number})\ncommand "${params[0]}" requires ${arity}, have ${params.length-1}`);
+function checkParams(params, minArity, maxArity=minArity+1) {
+    if (params.length-1 < minArity) {
+        throw new Error(`Syntax error: not enough parameters given (line ${line_number})\ncommand "${params[0]}" requires at least ${minArity}, have ${params.length-1}`);
     }
-    if (params.length-1 > arity+1) {
-        throw new Error(`Syntax error: too many parameters given (line ${line_number})\ncommand "${params[0]}" requires at most ${arity+1}, have ${params.length-1}`);
+    if (params.length-1 > maxArity) {
+        throw new Error(`Syntax error: too many parameters given (line ${line_number})\ncommand "${params[0]}" requires at most ${maxArity}, have ${params.length-1}`);
     }
-    for (let i=0; i<arity; i++) {
+    for (let i=0; i<params.length; i++) {
         if (params[i] === undefined) {
             throw new Error(`Syntax error: invalid parameter (line ${line_number})`);
         }
@@ -83,10 +83,14 @@ function getOrientation(i) {
 function applyCommand(pixel, command) {
     switch(command[0].toLowerCase()) {
 
-        // unimplemented commands
+        // these commands should only appear in the preamble
         case "seed":
         case "type":
-        case "model":
+        case "model": {
+            throw new Error(`Syntax error: declaration of ${command[0]} inside definition body (line ${line_number})`);
+        }
+
+        // unimplemented commands
         case "detail":
         case "associated file":
         case "total mass": {
@@ -247,7 +251,7 @@ function applyCommand(pixel, command) {
             break;
         }
         case "text": {
-            checkParams(command, 8);
+            checkParams(command, 8, 8);
             let c = [command[1], command[2], command[3]];
             let scale_x = command[4];
             let scale_y = command[5];
@@ -279,27 +283,61 @@ function applyCommand(pixel, command) {
     return 0;
 }
 
-function parse(txt) {
-    let pixel = new Pixel();
+class ParsedData {
+    constructor(text) {
+        this.lines = text.split("\n");
+        this.line_number = 1;
+    }
 
-    let lines = txt.split("\n");
-    for (let line of lines) {
-        line_number++;
+    rewind (n) {
+        this.line_number -= n;
+    }
 
+    next () {
+        if (this.line_number >= this.lines) {
+            return {done:true};
+        } else {
+            this.line_number++;
+            return {
+                done:false,
+                value: this.lines[this.line_number-2]
+            };
+        }
+    }
+
+    [Symbol.iterator]() {
+        return this;
+    }
+}
+
+// the Preamble is the part where commands like "SEED", "AUTHOR" and "TYPE" or "MODEL" are found
+function parsePreamble(code, pixel) {
+    let seedSet = false;
+    let authorSet = false;
+
+    for (const line of code) {
+        line_number = code.line_number;
         if (line.length === 0) {
             continue;
         }
-        
-        // these keywords are the only ones that use whitespace as separator
         let command = line
-        .replace(/[,;]/g, "")
-        .split(" ")
-        .filter(x => x.length > 0);
-        switch (command[0].toLowerCase()) {
-            case "type":
-            case "model":
-            case "seed":
+            .replace(/[\s;]/g, "")
+            .split("=");
+        
+        switch(command[0].toLowerCase()) {
             case "author": {
+                if (authorSet) {
+                    throw new Error(`Syntax error: redeclaration of author (line ${code.line_number})`)
+                }
+                authorSet = true;
+                applyCommand(pixel,command);
+                continue;
+            }
+            case "seed": {
+                if (seedSet) {
+                    throw new Error(`Syntax error: redeclaration of seed (line ${code.line_number})`)
+                }
+                seedSet = true;
                 applyCommand(pixel,command);
                 continue;
             }
@@ -309,31 +347,77 @@ function parse(txt) {
                     continue;
                 }
             }
+            default: {
+                let found;
+                if (found = command[0].match(/type(?<typeNumber>[0-9]+)/i)) {
+                    pixel.setType(Number(found.typeNumber));
+                    return pixel;
+                }
+                else if (found = command[0].match(/model(?<typeNumber>[0-9]+)/i)) {
+                    pixel.setType(Number(found.typeNumber));
+                    return pixel;
+                }
+                else {
+                    // throw new error if we're being pedantic
+                    code.rewind(1);
+                    return pixel;
+                }
+            }
+        }
+    }
+}
+
+function parseBody(code, pixel) {
+    for (const line of code) {
+        if (line.length === 0) {
+            continue;
         }
 
-        // macro expansion
+        // perform macro expansion
         for (let variable in environment) {
             line = line.replace(variable, environment[variable]);
         }
 
-        // all the other keywords use commas as separator
-        command = line
-            .replace(";","")
+        let command = line
+            .replace(";", "")
             .split(",")
-            .filter(x => x.length > 0)
-            .map( s => {
-                if (s[0]===" ") {
-                    s = s.slice(1);             // remove leading whitespace
-                }
-                let x = Number(s);
-                return (isNaN(x)) ? (s) : (x);  // convert digit strings into numbers
-            });
+            .map(s => {
+                    if (s[0]===" ") {
+                        s = s.slice(1);             // remove leading whitespace
+                    }
+                    return s;
+                });
         
-            console.log(command);
+        // allow commas in the last argument of "text" command
+        let skipConversion = false
+        if (command[0] === "text" && command.length > 8) {
+            skipConversion = true;
+            for (let i=9; i<command.length; i++) {
+                command[8] += ","+command[i];
+            }
+            command = command.slice(0,9);
+        }
+        // convert digit strings into numbers, spare the text field
+        command = command.map((s, i) => {
+            if (skipConversion && i>8)
+                return s;
+            let x = Number(s);
+            return (isNaN(x)) ? (s) : (x);
+        });
+
+        console.log(command);
         if (applyCommand(pixel, command)) {
             return pixel;
         }
     }
+}
+
+function parse(txt) {
+    let pixel = new Pixel();
+    let code = new ParsedData(txt);
+
+    pixel = parsePreamble(code, pixel);
+    pixel = parseBody(code, pixel);
 
     return pixel;
 }

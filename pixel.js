@@ -31,9 +31,13 @@ class Pixel extends Primitive {
         this.name = name;
     }
 
+    setType(typeNumber) {
+        this.type = typeNumber;
+    }
+
     // generate the .obj file for the mesh
     toObjString () {
-        let obj = `# generated with ${sw_version} by Simone Bertolucci\n`;
+        let obj = `# generated with ${sw_version}\n`;
         if (this.author !== undefined) {
             obj += `# this pixel was created by ${this.author}\n`;
         }

@@ -1,4 +1,5 @@
 :root {
+    --page-bg: #212121;
     --editor-border: #3d7993;
     --editor-bg: #1d1e22;
     --editor-text: #9cdcfe;
@@ -16,7 +17,7 @@
 html, body {
     height: 100%;
     width: 100%;
-    background-color: #212121;
+    background-color: var(--page-bg);
 }
 
 .editor {
@@ -34,7 +35,7 @@ html, body {
     display: flex;
     flex-direction: column;
     background: var(--editor-bg);
-    padding: 2em;
+    padding: 1em;
     border-radius: 8px;
     border: 1px solid #444;
     box-shadow: 0px 4px 30px rgba(0, 0, 0, 0.5);
