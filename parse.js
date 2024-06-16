@@ -37,8 +37,8 @@ const reservedKeywords = [
     "endpixel"
 ]
 
-var line_number = 0;
-var environment = {};
+var line_number;
+var environment;
 
 // commands can have an extra parameter at the end, as a treat ehrm I mean, as a comment
 // for instance (from PIXELS.DEF): "asterisk, 75, -100, -100, 3, 36, gratuitus use of meaningless decoration;"
@@ -294,7 +294,7 @@ class ParsedData {
     }
 
     next () {
-        if (this.line_number >= this.lines) {
+        if (this.line_number > this.lines.length) {
             return {done:true};
         } else {
             this.line_number++;
@@ -368,7 +368,8 @@ function parsePreamble(code, pixel) {
 }
 
 function parseBody(code, pixel) {
-    for (const line of code) {
+    for (let line of code) {
+        line_number = code.line_number;
         if (line.length === 0) {
             continue;
         }
@@ -410,9 +411,11 @@ function parseBody(code, pixel) {
             return pixel;
         }
     }
+    throw new Error(`Syntax error: missing endpixel declaration (line ${line_number})`);
 }
 
-function parse(txt) {
+function parse(txt, env={}) {
+    environment = env;
     let pixel = new Pixel();
     let code = new ParsedData(txt);
 

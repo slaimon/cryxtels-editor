@@ -4,10 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./base.css">
-    <title>Document</title>
+    <title>Crystal Pixels Playground</title>
+    <script type="importmap">
+        {
+          "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/",
+            "o3dv": "https://cdn.jsdelivr.net/npm/online-3d-viewer@0.13.0/+esm"
+          }
+        }
+      </script>
 </head>
 <body>
-    <div class="editor">
+    <div id="main" class="main">
         <div class="editor_wrapper">
             <div class="editor_body">
                 <div class="editor_code">
@@ -25,15 +34,26 @@
                 </div>
             </div>
         </div>
+        <div id="viewport" class="viewer_wrapper"></div>
     </div>
 </body>
 <script type="module">
     import { parse } from "./parse.js"
     import { Pixel } from "./pixel.js"
+    import { createThreeLineMesh } from "./converter.js"
+    import { initializeViewer } from "./viewer.js"
 
+    const viewport = document.getElementById("viewport");
+    const viewer = initializeViewer(viewport);
     function send() {
-        let mesh = parse(textarea.value);
-        console.log(mesh.toObjString());
+        let environment = {
+            "%d": Math.floor(Math.random() * 500)
+        }
+        let pixel = parse(textarea.value, environment);
+        let objstring = pixel.toObjString();
+        console.log(objstring);
+        const objFile = new File([objstring], `${pixel.name}.obj`);
+        viewer.LoadModelFromFileList([objFile]);
     }
 
     const textarea = document.getElementById("textarea");

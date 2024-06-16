@@ -44,6 +44,8 @@ class Pixel extends Primitive {
         obj += `# ${new Date().toISOString()}\n`
         obj += `o ${this.name}\n`;
 
+        this.FlipAlongAxis("x");
+        this.FlipAlongAxis("y");
         for (let v of this.vertices.concat(this.dots)) {
             obj += `v ${v[0]} ${v[1]} ${v[2]}`;
             obj += "\n";

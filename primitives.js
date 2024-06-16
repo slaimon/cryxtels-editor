@@ -58,6 +58,17 @@ class Primitive {
         this.dots = this.dots.concat(primitive.dots);
     }
 
+    FlipAlongAxis (axis) {
+        switch (axis) {
+            case "x": axis = 0; break;
+            case "y": axis = 1; break;
+            case "z": axis = 2; break;
+        }
+        for (let i=0; i<this.vertices.length; i++) {
+            this.vertices[i][axis] = -this.vertices[i][axis];
+        }
+    }
+
     Translate (vector) {
         this.vertices = this.vertices.map(v => vec3_add(v, vector));
         this.dots = this.dots.map(v => vec3_add(v, vector));
@@ -534,13 +545,13 @@ class Torus extends Primitive {
             }
         }
         if (plane === "xz" || plane === "zx") {
-            this.reflect(2, 1);
+            this.Reflect(2, 1);
         }
         else if (plane === "yz" || plane === "zy") {
-            this.reflect(0,2);
-            this.reflect(1,2);
+            this.Reflect(0,2);
+            this.Reflect(1,2);
         }
-        this.translate(c);
+        this.Translate(c);
     }
 }
 
