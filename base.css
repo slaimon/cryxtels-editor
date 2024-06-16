@@ -1,5 +1,6 @@
 :root {
     --page-bg: #212121;
+    --page-text: #9cdcfe;
     --editor-border: #3d7993;
     --editor-bg: #1d1e22;
     --editor-text: #9cdcfe;
@@ -45,6 +46,42 @@ html, body {
 .viewer_wrapper {
     height: 100%;
     width: 60%;
+}
+
+.editor_menubar {
+    height: 1em;
+    width: 100%;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: 1em;
+
+    padding: 0px 1px;
+    margin: 5px 1px;
+}
+
+.editor_menu {
+    width: min-content;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin-bottom: 3px;
+}
+
+.editor_menubtn {
+    font-family: monospace;
+    font-size: large;
+
+    border-width: 1px;
+    border-radius: 3px;
+    padding: 2px;
+
+    color: var(--page-text);
+    background-color: var(--page-bg);
+    border-color: var(--lines-text);
 }
 
 .editor_body {
@@ -113,6 +150,8 @@ html, body {
     outline: none;
     padding: 0.5rem;
     resize: none;
+
+    font-family: monospace;
     font-size: 15px;
 
     color:var(--editor-text);

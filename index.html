@@ -18,6 +18,20 @@
 <body>
     <div id="main" class="main">
         <div class="editor_wrapper">
+            <div class="editor_menubar">
+                <div class="editor_menu">
+                    <button id="load_btn" class="editor_menubtn">Load...</button>
+                </div>
+                <div class="editor_menu">
+                    <button id="export_btn" class="editor_menubtn">Save...</button>
+                </div>
+                <div class="editor_menu">
+                    <button id="reset_btn" class="editor_menubtn">Reset</button>
+                </div>
+                <div class="editor_menu">
+                    <select name="Load" id="load_select" class="editor_menuselect">Load...</select>
+                </div>
+            </div>
             <div class="editor_body">
                 <div class="editor_code">
                     <textarea id="textarea" class="code_textarea"></textarea>
@@ -50,6 +64,7 @@
             "%d": Math.floor(Math.random() * 500)
         }
         let pixel = parse(textarea.value, environment);
+        pixel.addShip();
         let objstring = pixel.toObjString();
         console.log(objstring);
         const objFile = new File([objstring], `${pixel.name}.obj`);

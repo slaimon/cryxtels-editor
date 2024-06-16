@@ -1,4 +1,5 @@
 import { Primitive } from "./primitives.js";
+import { Ship } from "./ship.js"
 
 export {Pixel}
 
@@ -23,16 +24,24 @@ class Pixel extends Primitive {
         this.primitives = [];
     }
 
-    setAuthor(name) {
+    setAuthor (name) {
         this.author = name;
     }
 
-    setName(name) {
+    setName (name) {
         this.name = name;
     }
 
-    setType(typeNumber) {
+    setType (typeNumber) {
         this.type = typeNumber;
+    }
+
+    setDockPosition (c) {
+        this.dock = c;
+    }
+
+    addShip () {
+        this.Add(new Ship(this.dock));
     }
 
     // generate the .obj file for the mesh

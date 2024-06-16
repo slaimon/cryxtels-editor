@@ -105,6 +105,14 @@ function applyCommand(pixel, command) {
             break;
         }
 
+        case "dock": {
+            checkParams(command, 5);
+            let c = [command[1], command[2], command[3]];
+
+            pixel.setDockPosition(c);
+            break;
+        }
+
         // dot primitives
         case "dot": {
             checkParams(command, 3);
@@ -265,7 +273,7 @@ function applyCommand(pixel, command) {
 
         // collision primitives, could be interesting to extend this in the future
         // should add solidbox to these because it creates a collision block AND a pixel
-        case "dock":
+        // case "dock":
         case "collision":
         case "collisionhigh":
         case "forbidden": {
