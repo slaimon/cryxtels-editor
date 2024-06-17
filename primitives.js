@@ -24,7 +24,7 @@ export {
 const merge_threshold = 0.0;
 
 class Primitive {
-    constructor (name="") {
+    constructor (name="Primitive") {
         this.name = name;
         this.vertices = [];
         this.lines = [];
@@ -88,6 +88,15 @@ class Primitive {
             v => v.applyQuaternion(quaternion)
         );
     }
+
+    Orientation (plane) {
+        switch (plane) {
+            case "xy": break;
+            case "xz": this.Rotate(vector_constants.XAxis, Math.PI/2.0); break;
+            case "yz": this.Rotate(vector_constants.YAxis, Math.PI/2.0); break;
+            default: throw new Error(`${this.name} Error: invalid orientation plane "${plane}"`);
+        }
+    }
 }
 
 // "linking" a vertex list is an operation often performed by the render functions in cryxtels.
@@ -126,57 +135,21 @@ class Line extends Primitive {
     }
 }
 
-/*
-    Many of the primitives have a lot of duplicated code and I'd love nothing more than to simplify them,
-    but I'm not good enough at geometry and at decoding arcane pseudo-assembly C++ code :)
-
-    I'm especially talking about the plane orientation of grids, spirals and ellipses.
-    I tried to use reflections and translations but the result was disastrous lol, it would've gone better
-    if I was able to iterate more quickly but right now I don't have a renderer and I need to copy-paste
-    the .obj files from the console to an online 3d viewer and it's soooo sloooow
-
-    So for now I'm copying the very verbose code from the original, where it gives the formulas explicitly
-    on a case-by-case basis. I suppose a switch-case was faster than doing transformations.
-*/
-
 class Rectangle extends Primitive {
-    constructor (center, hx, hy, orientation="xy") {
+    constructor (c, hx, hy, plane="xy") {
         super("Rectangle");
 
         let v = [];
-        switch (orientation) {
-            case "yx":
-            case "xy": {
-                v.push([center[0]+hx, center[1]+hy, center[2]]);
-                v.push([center[0]+hx, center[1]-hy, center[2]]);
-                v.push([center[0]-hx, center[1]-hy, center[2]]);
-                v.push([center[0]-hx, center[1]+hy, center[2]]);
-                break;
-            }
-            case "zx":
-            case "xz": {
-                v.push([center[0]+hx, center[1], center[2]+hy]);
-                v.push([center[0]+hx, center[1], center[2]-hy]);
-                v.push([center[0]-hx, center[1], center[2]-hy]);
-                v.push([center[0]-hx, center[1], center[2]+hy]);
-                break;
-            }
-            case "zy":
-            case "yz": {
-                v.push([center[0], center[1]+hx, center[2]+hy]);
-                v.push([center[0], center[1]+hx, center[2]-hy]);
-                v.push([center[0], center[1]-hx, center[2]-hy]);
-                v.push([center[0], center[1]-hx, center[2]+hy]);
-                break;
-            }
-            default: {
-                throw new Error(`RECTANGLE ERROR: Invalid orientation \"${orientation}\"`);
-            }
-        }
+        v.push([ hx,  hy, 0]);
+        v.push([ hx, -hy, 0]);
+        v.push([-hx, -hy, 0]);
+        v.push([-hx,  hy, 0]);
         let l = [1, 2, 3, 4, 1];
-        
+
         this.vertices = v.map(v=>vec3(v));
         this.lines = [l];
+        this.Orientation(plane);
+        this.Translate(vec3(c));
     }
 }
 
@@ -229,71 +202,27 @@ class Grid extends Primitive {
         if ( tiles < 0 )
             throw new Error(`GRID ERROR: invalid argument tiles = ${tiles}`);
         
-        switch (plane) {
-            case "xy": {
-                c[0] -= (tiles*width) / 2;
-                c[1] -= (tiles*height)/ 2;
-                
-                let c_0 = c[0];
-                let p   = c[1] + tiles*height;
-                for(let a=0; a<=tiles; a++) {
-                    this.Add(new Line([c[0], c[1], c[2]],
-                                      [c[0], p   , c[2]]));
-                    c[0] += width;
-                }
-                c[0] = c_0;
-                p    = c[0] + tiles*width;
-                for(let a=0; a<=tiles; a++) {
-                    this.Add(new Line([c[0], c[1], c[2]],
-                                      [p   , c[1], c[2]]));
-                    c[1] += height;
-                }
-                break;
-            }
-            case "xz": {
-                c[0] -= (tiles*width) / 2;
-                c[2] -= (tiles*height) / 2;
-    
-                let c_0 = c[0];
-                let p   = c[2] + tiles*height;
-                for (let a=0; a<=tiles; a++) {
-                    this.Add(new Line([c[0], c[1], c[2]],
-                                      [c[0], c[1], p   ]));
-                    c[0] += width;
-                }
-                c[0] = c_0;
-                p    = c[0] + tiles*width;
-                for (let a=0; a<=tiles; a++) {
-                    this.Add(new Line([c[0], c[1], c[2]], 
-                                      [p   , c[1], c[2]]));
-                    c[2] += height;
-                }
-                break;
-            }
-            case "yz": {
-                c[2] -= (tiles*width) / 2;
-                c[1] -= (tiles*height) / 2;
-
-                let c_2 = c[2];
-                let p   = c[1] + tiles*height;
-                for (let a=0; a<=tiles; a++) {
-                    this.Add(new Line([c[0], c[1], c[2]],
-                                      [c[0], p   , c[2]]));
-                    c[2] += width;
-                }
-                c[2] = c_2;
-                p    = c[2] + tiles*width;
-                for (let a=0; a<=tiles; a++) {
-                    this.Add(new Line([c[0], c[1], c[2]],
-                                      [c[0], c[1], p   ]));
-                    c[1] += height;
-                }
-                break;
-            }
-            default: {
-                throw new Error(`GRID ERROR: Invalid plane "${plane}"`);
-            }
+        let r = [0, 0, 0];
+        r[0] -= (tiles*width) / 2;
+        r[1] -= (tiles*height)/ 2;
+        
+        let r_0 = r[0];
+        let p   = r[1] + tiles*height;
+        for(let a=0; a<=tiles; a++) {
+            this.Add(new Line([r[0], r[1], r[2]],
+                              [r[0], p   , r[2]]));
+            r[0] += width;
         }
+        r[0] = r_0;
+        p    = r[0] + tiles*width;
+        for(let a=0; a<=tiles; a++) {
+            this.Add(new Line([r[0], r[1], r[2]],
+                              [p   , r[1], r[2]]));
+            r[1] += height;
+        }
+
+        this.Orientation(plane);
+        this.Translate(vec3(c));
     }
 }
 
@@ -312,50 +241,21 @@ class Spiral extends Primitive {
         let crx = step;
         let cry = 0;
 
-        switch (plane) {
-            case "xy": {
-                while (a<1080) {
-                    // I had to introduce the k0 variable to fix a "bug" in the original code
-                    // where the segments weren't adjacent (or maybe they weren't intended to be?)
-                    // to reinstate the old spirals, just replace k0 with k1 in the following formula
-                    this.Add(new Line([c[0]+k1*tcos(crx), c[1]+k1*tsin(crx), c[2]],
-                                      [c[0]+k0*tcos(cry), c[1]+k0*tsin(cry), c[2]]));
-                    cry = crx;
-                    crx = (crx + step) % 360;
-                    k0 = k1;
-                    k1 += increment;
-                    a += step;
-                }
-                break;
-            }
-            case "xz": {
-                while (a<1080) {
-                    this.Add(new Line([c[0]+k1*tcos(crx), c[1], c[2]+k1*tsin(crx)],
-                                      [c[0]+k0*tcos(cry), c[1], c[2]+k0*tsin(cry)]));
-                    cry = crx;
-                    crx = (crx + step) % 360;
-                    k0 = k1;
-                    k1 += increment;
-                    a += step;
-                }
-                break;
-            }
-            case "yz": {
-                while (a<1080) {
-                    this.Add(new Line([c[0], c[1]+k1*tcos(crx), c[2]+k1*tsin(crx)],
-                                      [c[0], c[1]+k0*tcos(cry), c[2]+k0*tsin(cry)]));
-                    cry = crx;
-                    crx = (crx + step) % 360;
-                    k0 = k1;
-                    k1 += increment;
-                    a += step;
-                }
-                break;
-            }
-            default: {
-                throw new Error(`SPIRAL ERROR: Invalid plane "${plane}"`);
-            }
+        while (a<1080) {
+            // I had to introduce the k0 variable to fix a "bug" in the original code
+            // where the segments weren't adjacent (or maybe they weren't intended to be?)
+            // to reinstate the old spirals, just replace k0 with k1 in the following formula
+            this.Add(new Line([k1*tcos(crx), k1*tsin(crx), 0],
+                              [k0*tcos(cry), k0*tsin(cry), 0]));
+            cry = crx;
+            crx = (crx + step) % 360;
+            k0 = k1;
+            k1 += increment;
+            a += step;
         }
+
+        this.Orientation(plane);
+        this.Translate(vec3(c));
     }
 }
 
@@ -368,52 +268,21 @@ class Ellipse extends Primitive {
         }
         if (step > 90)
             step = 90;
-        
-        let crx, cry, crz;
-        switch (plane) {
-            case "xy": {
-                let ux = c[0] + width;
-                let uy = c[1];
-                for (let i=step; i<360; i+=step) {
-                    crx = c[0] + width*tcos(i);
-                    cry = c[1] + height*tsin(i);
-                    this.Add(new Line([ux, uy, c[2]], [crx, cry, c[2]]));
-                    ux = crx;
-                    uy = cry;
-                }
-                this.Add(new Line([ux, uy, c[2]], [c[0]+width, c[1], c[2]]));
-                break;
-            }
-            case "xz": {
-                let ux = c[0] + width;
-                let uz = c[2];
-                for (let i=step; i<360; i+=step) {
-                    crx = c[0] + width*tcos(i);
-                    crz = c[2] + height*tsin(i);
-                    this.Add(new Line([ux, c[1], uz], [crx, c[1], crz]));
-                    ux = crx;
-                    uz = crz;
-                }
-                this.Add(new Line([ux, c[1], uz], [c[0]+width, c[1], c[2]]));
-                break;
-            }
-            case "yz": {
-                let uy = c[1] + width;
-                let uz = c[2];
-                for (let i=step; i<360; i+=step) {
-                    cry = c[1] + width*tcos(i);
-                    crz = c[2] + height*tsin(i);
-                    this.Add(new Line([c[0], uy, uz], [c[0], cry, crz]));
-                    uy = cry;
-                    uz = crz;
-                }
-                this.Add(new Line([c[0], uy, uz], [c[0], c[1]+width, c[2]]));
-                break;
-            }
-            default: {
-                throw new Error(`ELLIPSE ERROR: Invalid plane "${plane}"`);
-            }
+
+        let crx, cry;
+        let ux = width;
+        let uy = 0;
+        for (let i=step; i<360; i+=step) {
+            crx = width*tcos(i);
+            cry = height*tsin(i);
+            this.Add(new Line([ux, uy, 0], [crx, cry, 0]));
+            ux = crx;
+            uy = cry;
         }
+        this.Add(new Line([ux, uy, 0], [width, 0, 0]));
+
+        this.Orientation(plane);
+        this.Translate(vec3(c));
     }
 }
 
@@ -427,24 +296,10 @@ class DotEllipse extends Primitive {
         if (step > 90)
             step = 90;
 
-        switch (plane) {
-            case "xy": {
-                for (let i=0; i<360; i+=step)
-                    this.Add(new Dot([width*tcos(i), height*tsin(i), 0]));
-                break;
-            }
-            case "xz": {
-                for (let i=0; i<360; i+=step)
-                    this.Add(new Dot([width*tcos(i), 0, height*tsin(i)]));
-                break;
-            }
-            case "yz": {
-                for (let i=0; i<360; i+=step)
-                    this.Add(new Dot([0, height*tsin(i), width*tcos(i)]));
-                break;
-            }
-        }
+        for (let i=0; i<360; i+=step)
+            this.Add(new Dot([width*tcos(i), height*tsin(i), 0]));
 
+        this.Orientation(plane);
         this.Translate(vec3(c));
     }
 }
@@ -511,54 +366,39 @@ class GridSphere extends Primitive {
 
 class Torus extends Primitive {
     // the original documentation omits the PLANE argument
-    // TODO I'm still unsure whether this actually works for all orientations and centers 
     constructor (c, radius, section, plane, step) {
         super("Torus");
 
         if(step > 90)
             step = 90;
         
-        switch (plane) {
-            case "yx": case "xy":
-            case "xz": case "zx":
-            case "zy": case "yz": {
-                let first_x, first_y, first_z;
-                let crx, cry, crz;
-                let ux, uy;
+        let first_x, first_y, first_z;
+        let crx, cry, crz;
+        let ux, uy;
 
-                for (let a=step; a<360+step; a+=step) {
-                    first_x = (section-radius)*tcos(a);
-                    first_z = (radius-section)*tsin(a);
-                    first_y = 0;
-                    cry = first_x;
-                    for (let i=step; i<360; i+=step*2) {
-                        ux = tcos(i)*section - radius;
-                        uy = tsin(i)*section;
-                        crx =  ux*tcos(a);
-                        crz = -ux*tsin(a);
-                        this.Add(new Line([crx, crz, uy],
-                                          [first_x, first_z, first_y]));
-                        first_x = crx;
-                        first_y =  uy;
-                        first_z = crz;
-                        this.Add(new Line([crx, crz, uy],
-                                          [ux*tcos(a-step), -ux*tsin(a-step), uy]));
-                    }
-                    this.Add(new Line([crx, crz, uy],
-                                      [cry, (radius-section)*tsin(a), 0]));
-                }
-                break;
+        for (let a=step; a<360+step; a+=step) {
+            first_x = (section-radius)*tcos(a);
+            first_z = (radius-section)*tsin(a);
+            first_y = 0;
+            cry = first_x;
+            for (let i=step; i<360; i+=step*2) {
+                ux = tcos(i)*section - radius;
+                uy = tsin(i)*section;
+                crx =  ux*tcos(a);
+                crz = -ux*tsin(a);
+                this.Add(new Line([crx, crz, uy],
+                                  [first_x, first_z, first_y]));
+                first_x = crx;
+                first_y =  uy;
+                first_z = crz;
+                this.Add(new Line([crx, crz, uy],
+                                  [ux*tcos(a-step), -ux*tsin(a-step), uy]));
             }
-            default: {
-                  throw new Error(`TORUS ERROR: Invalid plane "${plane}"`);  
-            }
+            this.Add(new Line([crx, crz, uy],
+                              [cry, (radius-section)*tsin(a), 0]));
         }
-        if (plane === "xz" || plane === "zx") {
-            this.Rotate(vector_constants.XAxis, Math.PI/2.0);
-        }
-        else if (plane === "yz" || plane === "zy") {
-            this.Rotate(vector_constants.YAxis, Math.PI/2.0);
-        }
+
+        this.Orientation(plane);
         this.Translate(vec3(c));
     }
 }
@@ -570,52 +410,21 @@ class Wave extends Primitive {
         if (step > 90)
             step = 90;
 
-        let ux, uy, uz;
-        let ox, oy, oz;
-        switch (plane) {
-            case "xy": {
-                ux = c[0] - scale*180 + step*scale;
-                oy = c[1];
-                ox = ux - step*scale;
-                for (let i=step; i<=360; i+=step) {
-                    uy = c[1] + tsin(i) * amplitude;
-                    this.Add(new Line([ux, uy, c[2]], [ox, oy, c[2]]));
-                    oy = uy;
-                    ox = ux;
-                    ux += step*scale;
-                }
-                break;
-            }
-            case "xz": {
-                uz = c[2] - scale*180 + step*scale;
-                ox = c[0];
-                oz = uz - step*scale;
-                for (let i=step; i<=360; i+=step) {
-                    ux = tsin(i) * amplitude;
-                    this.Add(new Line([ux, c[1], uz], [ox, c[1], oz]));
-                    ox = ux;
-                    oz = uz;
-                    uz += step*scale;
-                }
-                break;
-            }
-            case "yz": {
-                uz = c[2] - scale*180 + step*scale;
-                oy = c[1];
-                oz = uz - step*scale;
-                for (let i=step; i<=360; i+=step) {
-                    uy = c[1] + tsin(i) * amplitude;
-                    this.Add(new Line([c[0], uy, uz], [c[0], oy, oz]));
-                    oy = uy;
-                    oz = uz;
-                    uz += step*scale;
-                }
-                break;
-            }
-            default: {
-                throw new Error(`WAVE ERROR: Invalid plane "${plane}"`);
-            }
+        let ux, uy;
+        let ox, oy;
+        ux = -scale*180 + step*scale;
+        oy = 0;
+        ox = ux - step*scale;
+        for (let i=step; i<=360; i+=step) {
+            uy = tsin(i) * amplitude;
+            this.Add(new Line([ux, uy, 0], [ox, oy, 0]));
+            oy = uy;
+            ox = ux;
+            ux += step*scale;
         }
+
+        this.Orientation(plane);
+        this.Translate(vec3(c));
     }
 }
 
