@@ -85,8 +85,8 @@ const flyOUT3 =
 ];
 
 class Ship extends Primitive {
-    constructor(c) {
-        super();
+    constructor() {
+        super("Ship");
         this.Add(new Link(flyIN1));
         this.Add(new Link(flyIN2));
         this.Add(new Link(flyOUT1));
@@ -96,8 +96,5 @@ class Ship extends Primitive {
         this.Add(new Rectangle([0, 4.95, 12.01], 6, 0.95));
         this.Add(new Rectangle([0, 4.95, 14], 6, 0.95));
         this.Add(new Rectangle([0, 13.5, 58], 4, 2.5));
-
-        this.Translate(c);
-        this.Translate([0, -16, 0]);
     }
 }

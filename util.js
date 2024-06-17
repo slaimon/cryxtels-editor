@@ -1,4 +1,5 @@
-export {tsin, tcos, vec3_compare, vec3_add}
+import * as THREE from "three"
+export {tsin, tcos, vec3, vector_constants}
 
 function tsin(x) {
     x = Math.floor(x);
@@ -16,21 +17,15 @@ function tcos(x) {
     return Math.cos(x*Math.PI/180);
 }
 
-function vec3_compare (a, b) {
-    let equal = true;
-    for (let i=0; i<3; i++) {
-        if (a[i] !== b[i]) {
-            equal = false;
-            break;
-        }
-    }
-    return equal;
+function vec3(array) {
+    return new THREE.Vector3(array[0], array[1], array[2]);
 }
 
-function vec3_add (a, b) {
-    let result = new Array(3);
-    for (let i=0; i<3; i++) {
-        result[i] = a[i] + b[i]
-    }
-    return result;
-}
+const vector_constants = {
+    XAxis : new THREE.Vector3(1,0,0),
+    YAxis : new THREE.Vector3(0,1,0),
+    ZAxis : new THREE.Vector3(0,0,1),
+    XYNormal : new THREE.Vector3(Math.SQRT1_2, Math.SQRT1_2, 0),
+    XZNormal : new THREE.Vector3(Math.SQRT1_2, 0, Math.SQRT1_2),
+    YZNormal : new THREE.Vector3(0, Math.SQRT1_2, Math.SQRT1_2)
+};

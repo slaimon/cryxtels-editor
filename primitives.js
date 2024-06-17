@@ -1,5 +1,7 @@
-import {tsin, tcos, vec3_compare, vec3_add} from "./util.js"
+import {tsin, tcos, vec3, vector_constants} from "./util.js"
+import * as THREE from "three"
 export {
+    vector_constants,
     Primitive,
     Link,
     Dot,
@@ -17,6 +19,9 @@ export {
     Wave,
     Column
 }
+
+// if two vertices have a distance less than this, they should be merged into one
+const merge_threshold = 0.0;
 
 class Primitive {
     constructor (name="") {
@@ -41,7 +46,7 @@ class Primitive {
         let relocationMap = new Map();
 
         for (const [i, vertex] of primitive.vertices.entries()) {
-            let index_new = this.vertices.findIndex(v => vec3_compare(v, vertex));
+            let index_new = this.vertices.findIndex(v => v.distanceTo(vertex) <= merge_threshold);
             if (index_new === -1) {
                 this.vertices.push(vertex);
                 relocationMap.set(i+1, this.vertices.length);
@@ -58,43 +63,30 @@ class Primitive {
         this.dots = this.dots.concat(primitive.dots);
     }
 
-    FlipAlongAxis (axis) {
-        switch (axis) {
-            case "x": axis = 0; break;
-            case "y": axis = 1; break;
-            case "z": axis = 2; break;
-        }
-        for (let i=0; i<this.vertices.length; i++) {
-            this.vertices[i][axis] = -this.vertices[i][axis];
-        }
-    }
-
     Translate (vector) {
-        this.vertices = this.vertices.map(v => vec3_add(v, vector));
-        this.dots = this.dots.map(v => vec3_add(v, vector));
+        this.vertices = this.vertices.map(v => v.add(vector));
+        this.dots = this.dots.map(v => v.add(vector));
     }
 
-    // swap the two coordinates, reflecting the mesh along the c1 = c2 plane
-    Reflect (c1, c2) {
-        function dest(src) {
-            if (src === c1) {
-                return c2;
-            }
-            if (src === c2) {
-                return c1;
-            }
-            else return src;
-        }
+    Reflect (normal) {
+        this.vertices = this.vertices.map(
+            v => v.reflect(normal)
+        );
+        this.dots = this.dots.map(
+            v => v.reflect(normal)
+        );
+    }
 
-        let vlist = [];
-        for (let v of this.vertices) {
-            let v_new = Array(3);
-            for (let src=0; src<3; src++) {
-                v_new[dest(src)] = v[src];
-            }
-            vlist.push(v_new);
-        }
-        this.vertices = vlist;
+    Rotate (axis, angle) {
+        let quaternion = new THREE.Quaternion();
+        quaternion.setFromAxisAngle(axis, angle);
+
+        this.vertices = this.vertices.map(
+            v => v.applyQuaternion(quaternion)
+        );
+        this.dots = this.dots.map(
+            v => v.applyQuaternion(quaternion)
+        );
     }
 }
 
@@ -114,7 +106,7 @@ class Link extends Primitive {
             l.push([i,i+1]);
         }
         
-        this.vertices = v;
+        this.vertices = v.map(v=>vec3(v));
         this.lines = l;
     }
 }
@@ -122,17 +114,30 @@ class Link extends Primitive {
 class Dot extends Primitive {
     constructor (c) {
         super("Dot");
-        this.dots = [c];
+        this.dots = [vec3(c)];
     }
 }
 
 class Line extends Primitive {
     constructor (start, end) {
         super("Line");
-        this.vertices = [start, end];
+        this.vertices = [vec3(start), vec3(end)];
         this.lines = [[1, 2]];
     }
 }
+
+/*
+    Many of the primitives have a lot of duplicated code and I'd love nothing more than to simplify them,
+    but I'm not good enough at geometry and at decoding arcane pseudo-assembly C++ code :)
+
+    I'm especially talking about the plane orientation of grids, spirals and ellipses.
+    I tried to use reflections and translations but the result was disastrous lol, it would've gone better
+    if I was able to iterate more quickly but right now I don't have a renderer and I need to copy-paste
+    the .obj files from the console to an online 3d viewer and it's soooo sloooow
+
+    So for now I'm copying the very verbose code from the original, where it gives the formulas explicitly
+    on a case-by-case basis. I suppose a switch-case was faster than doing transformations.
+*/
 
 class Rectangle extends Primitive {
     constructor (center, hx, hy, orientation="xy") {
@@ -170,7 +175,7 @@ class Rectangle extends Primitive {
         }
         let l = [1, 2, 3, 4, 1];
         
-        this.vertices = v;
+        this.vertices = v.map(v=>vec3(v));
         this.lines = [l];
     }
 }
@@ -439,6 +444,8 @@ class DotEllipse extends Primitive {
                 break;
             }
         }
+
+        this.Translate(vec3(c));
     }
 }
 
@@ -497,6 +504,8 @@ class GridSphere extends Primitive {
                 first_z = crz;
             }
         }
+
+        this.Translate(vec3(c));
     }
 }
 
@@ -545,13 +554,12 @@ class Torus extends Primitive {
             }
         }
         if (plane === "xz" || plane === "zx") {
-            this.Reflect(2, 1);
+            this.Rotate(vector_constants.XAxis, Math.PI/2.0);
         }
         else if (plane === "yz" || plane === "zy") {
-            this.Reflect(0,2);
-            this.Reflect(1,2);
+            this.Rotate(vector_constants.YAxis, Math.PI/2.0);
         }
-        this.Translate(c);
+        this.Translate(vec3(c));
     }
 }
 

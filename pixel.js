@@ -1,20 +1,9 @@
 import { Primitive } from "./primitives.js";
-import { Ship } from "./ship.js"
+import { vector_constants, vec3 } from "./util.js";
+import { Ship } from "./ship.js";
+import * as THREE from "three";
 
 export {Pixel}
-
-/*
-    Many of the primitives have a lot of duplicated code and I'd love nothing more than to simplify them,
-    but I'm not good enough at geometry and at decoding arcane pseudo-assembly C++ code :)
-
-    I'm especially talking about the plane orientation of grids, spirals and ellipses.
-    I tried to use reflections and translations but the result was disastrous lol, it would've gone better
-    if I was able to iterate more quickly but right now I don't have a renderer and I need to copy-paste
-    the .obj files from the console to an online 3d viewer and it's soooo sloooow
-
-    So for now I'm copying the very verbose code from the original, where it gives the formulas explicitly
-    on a case-by-case basis. I suppose a switch-case was faster than doing transformations.
-*/
 
 const sw_version = "cryxtels2obj v0.4";
 
@@ -34,14 +23,38 @@ class Pixel extends Primitive {
 
     setType (typeNumber) {
         this.type = typeNumber;
+        this.supportsLanding = true;
+    }
+
+    setModel (modelNumber) {
+        this.model = modelNumber;
+        this.supportsLanding = false;
     }
 
     setDockPosition (c) {
-        this.dock = c;
+        this.dockPosition = vec3(c);
+        this.hasDock = true;
     }
 
-    addShip () {
-        this.Add(new Ship(this.dock));
+    addShip (axis, angle) {
+        if (this.hasShip)
+            return;
+        if (!this.hasDock)
+            return;
+        if (!this.supportsLanding)
+            return;
+
+        let ship = new Ship();
+        if (axis && angle) {
+            ship.Rotate(axis, angle);
+        }
+        else {
+            ship.Rotate(vector_constants.YAxis, Math.random()*2.0*Math.PI)
+        }
+        ship.Translate(this.dockPosition.add(new THREE.Vector3(0,-16,0)));
+        this.Add(ship);
+
+        this.hasShip = true;
     }
 
     // generate the .obj file for the mesh
@@ -53,10 +66,9 @@ class Pixel extends Primitive {
         obj += `# ${new Date().toISOString()}\n`
         obj += `o ${this.name}\n`;
 
-        this.FlipAlongAxis("x");
-        this.FlipAlongAxis("y");
+        this.Rotate(vector_constants.ZAxis, Math.PI);
         for (let v of this.vertices.concat(this.dots)) {
-            obj += `v ${v[0]} ${v[1]} ${v[2]}`;
+            obj += `v ${v.x} ${v.y} ${v.z}`;
             obj += "\n";
         }
         for (let line of this.lines) {

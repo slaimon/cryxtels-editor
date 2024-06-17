@@ -362,7 +362,7 @@ function parsePreamble(code, pixel) {
                     return pixel;
                 }
                 else if (found = command[0].match(/model(?<typeNumber>[0-9]+)/i)) {
-                    pixel.setType(Number(found.typeNumber));
+                    pixel.setModel(Number(found.typeNumber));
                     return pixel;
                 }
                 else {
