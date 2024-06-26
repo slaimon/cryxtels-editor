@@ -1,7 +1,6 @@
 import {tsin, tcos, vec3, vector_constants} from "./util.js"
 import * as THREE from "three"
 export {
-    vector_constants,
     Primitive,
     Link,
     Dot,

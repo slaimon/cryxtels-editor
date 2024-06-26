@@ -275,7 +275,7 @@ function applyCommand(pixel, command) {
         // should add solidbox to these because it creates a collision block AND a pixel
         // case "dock":
         case "collision":
-        case "collisionhigh":
+        case "collision high":
         case "forbidden": {
             break;
         }
