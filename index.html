@@ -19,11 +19,19 @@
     <div id="main" class="main">
         <div class="editor_wrapper">
             <div class="editor_menubar">
-                <div class="editor_menu">
-                    <button id="load_btn" class="editor_menubtn">Load...</button>
+                <div class="editor_menu dropdown_menu">
+                    <button id="load_btn" class="editor_menubtn dropdown_btn">Load...</button>
+                    <div id="load_dropdown" class="dropdown_content">
+                        <p class="dropdown_option">Pixels...</p>
+                        <p class="dropdown_option">Models...</p>
+                    </div>
                 </div>
-                <div class="editor_menu">
-                    <button id="export_btn" class="editor_menubtn">Save...</button>
+                <div class="editor_menu dropdown_menu">
+                    <button id="save_btn" class="editor_menubtn dropdown_btn">Save...</button>
+                    <div id="save_dropdown" class="dropdown_content">
+                        <p class="dropdown_option">Compile and Copy</p>
+                        <p class="dropdown_option">Export .OBJ Mesh</p>
+                    </div>
                 </div>
                 <div class="editor_menu">
                     <button id="reset_btn" class="editor_menubtn">Reset</button>
@@ -51,6 +59,7 @@
         <div id="viewport" class="viewer_wrapper"></div>
     </div>
 </body>
+<script src="ui.js"></script>
 <script type="module">
     import { parse } from "./parse.js"
     import { Pixel } from "./pixel.js"
@@ -59,7 +68,9 @@
 
     const viewport = document.getElementById("viewport");
     const viewer = initializeViewer(viewport);
-    function send() {
+    const textarea = document.getElementById("textarea");
+    const editor_btn = document.getElementById("editor_btn");
+    function runDefinition() {
         let environment = {
             "%d": Math.floor(Math.random() * 500)
         }
@@ -71,9 +82,6 @@
         viewer.LoadModelFromFileList([objFile]);
     }
 
-    const textarea = document.getElementById("textarea");
-    const editor_btn = document.getElementById("editor_btn");
-
-    editor_btn.addEventListener("click", send);
+    editor_btn.addEventListener("click", runDefinition);
 </script>
 </html>
