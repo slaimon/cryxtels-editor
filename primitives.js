@@ -88,11 +88,19 @@ class Primitive {
         );
     }
 
+    // rotation type B (default)
     Orientation (plane) {
         switch (plane) {
             case "xy": break;
-            case "xz": this.Rotate(vector_constants.XAxis, Math.PI/2.0); break;
-            case "yz": this.Rotate(vector_constants.YAxis, Math.PI/2.0); break;
+            case "xz": {
+                this.Rotate(vector_constants.XAxis, Math.PI/2.0);
+                break;
+            }
+            case "yz": {
+                this.Rotate(vector_constants.XAxis, Math.PI/2.0);
+                this.Rotate(vector_constants.ZAxis, Math.PI/2.0);
+                break;
+            }
             default: throw new Error(`${this.name} Error: invalid orientation plane "${plane}"`);
         }
     }
@@ -149,6 +157,22 @@ class Rectangle extends Primitive {
         this.lines = [l];
         this.Orientation(plane);
         this.Translate(vec3(c));
+    }
+
+    // override in order to maintain compatibility (rotation type A)
+    Orientation (plane) {
+        switch (plane) {
+            case "xy": break;
+            case "xz": {
+                this.Rotate(vector_constants.XAxis, Math.PI/2.0);
+                break;
+            }
+            case "yz": {
+                this.Rotate(vector_constants.YAxis, Math.PI/2.0);
+                break;
+            }
+            default: throw new Error(`${this.name} Error: invalid orientation plane "${plane}"`);
+        }
     }
 }
 
@@ -222,6 +246,22 @@ class Grid extends Primitive {
 
         this.Orientation(plane);
         this.Translate(vec3(c));
+    }
+
+    // override in order to maintain compatibility (rotation type A)
+    Orientation (plane) {
+        switch (plane) {
+            case "xy": break;
+            case "xz": {
+                this.Rotate(vector_constants.XAxis, Math.PI/2.0);
+                break;
+            }
+            case "yz": {
+                this.Rotate(vector_constants.YAxis, Math.PI/2.0);
+                break;
+            }
+            default: throw new Error(`${this.name} Error: invalid orientation plane "${plane}"`);
+        }
     }
 }
 
@@ -424,6 +464,23 @@ class Wave extends Primitive {
 
         this.Orientation(plane);
         this.Translate(vec3(c));
+    }
+    
+    // override in order to maintain compatibility (rotation type C)
+    Orientation (plane) {
+        switch (plane) {
+            case "xy": break;
+            case "xz": {
+                this.Rotate(vector_constants.YAxis, Math.PI/2.0);
+                this.Rotate(vector_constants.ZAxis, Math.PI/2.0);
+                break;
+            }
+            case "yz": {
+                this.Rotate(vector_constants.YAxis, -Math.PI/2.0);
+                break;
+            }
+            default: throw new Error(`${this.name} Error: invalid orientation plane "${plane}"`);
+        }
     }
 }
 
