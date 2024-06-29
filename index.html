@@ -20,24 +20,27 @@
         <div class="editor_wrapper">
             <div class="editor_menubar">
                 <div class="editor_menu dropdown_menu">
-                    <button id="load_btn" class="editor_menubtn dropdown_btn">Load...</button>
+                    <button id="load_btn" class="editor_menubtn dropdown_btn">
+                        Load
+                        <img src="arrowhead.svg" class="dropdown_icon"></img>
+                    </button>
                     <div id="load_dropdown" class="dropdown_content">
-                        <p class="dropdown_option">Pixels...</p>
-                        <p class="dropdown_option">Models...</p>
+                        <p id="pixelLoader" class="dropdown_option">Pixel...</p>
+                        <p class="dropdown_option">Model...</p>
                     </div>
                 </div>
                 <div class="editor_menu dropdown_menu">
-                    <button id="save_btn" class="editor_menubtn dropdown_btn">Save...</button>
+                    <button id="save_btn" class="editor_menubtn dropdown_btn">
+                        Save
+                        <img src="arrowhead.svg" class="dropdown_icon"></imf>
+                    </button>
                     <div id="save_dropdown" class="dropdown_content">
                         <p class="dropdown_option">Compile and Copy</p>
                         <p class="dropdown_option">Export .OBJ Mesh</p>
                     </div>
                 </div>
                 <div class="editor_menu">
-                    <button id="reset_btn" class="editor_menubtn">Reset</button>
-                </div>
-                <div class="editor_menu">
-                    <select name="Load" id="load_select" class="editor_menuselect">Load...</select>
+                    <button id="reset_btn" class="editor_menubtn">Reset Camera</button>
                 </div>
             </div>
             <div class="editor_body">
@@ -58,13 +61,23 @@
         </div>
         <div id="viewport" class="viewer_wrapper"></div>
     </div>
+    <div id="meshSelectionPopup" class="popup">
+        <div class="popup_content">
+            <h2>Select a mesh...</h2>
+            <hr>
+            <p>ciao io sn simone</p>
+        </div>
+    </div>
 </body>
-<script src="ui.js"></script>
 <script type="module">
     import { parse } from "./parse.js"
     import { Pixel } from "./pixel.js"
     import { createThreeLineMesh } from "./converter.js"
     import { initializeViewer } from "./viewer.js"
+    import { setPopup, clickHandler } from "./ui.js"
+
+    window.addEventListener("click", event => clickHandler(event));
+    setPopup("pixelLoader", "meshSelectionPopup");
 
     const viewport = document.getElementById("viewport");
     const viewer = initializeViewer(viewport);

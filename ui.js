@@ -1,31 +1,61 @@
-const buttonMap = {
+export { setPopup, clickHandler }
+
+const controlledBy = {
     "load_btn":"load_dropdown",
     "save_btn":"save_dropdown"
 };
-
-function showDropdown(buttonID) {
-    let content = document.getElementById(buttonMap[buttonID]);
-    content.classList.toggle("show");
+function showDropdown(contentID) {
+    document.getElementById(contentID).classList.toggle("show");
+    activeDropdown = contentID;
 }
-function hideAllDropdowns() {
-    var dropdowns = document.getElementsByClassName("dropdown_content");
-    for (const content of dropdowns) {
-        if (content.classList.contains("show")) 
-            content.classList.toggle("show");
+function hideDropdown() {
+    if (activeDropdown === null)
+        return;
+    document.getElementById(activeDropdown).classList.toggle("show");
+    activeDropdown = null;
+}
+function dropdownClickHandler(event) {
+    let button = event.target.closest(".dropdown_btn");
+    if (!button) {
+        hideDropdown();
+        return;
     }
+    if (activeDropdown === controlledBy[button.id]) {
+        hideDropdown();
+        return;
+    }
+    hideDropdown();
+    showDropdown(controlledBy[button.id]);
 }
+
+var activePopup = null;
+function showPopup(popupID) {
+    document.getElementById(popupID).classList.toggle("show");
+    activePopup = popupID;
+}
+function hidePopup() {
+    if (activePopup === null)
+        return;
+    document.getElementById(activePopup).classList.toggle("show");
+    activePopup = null;
+}
+function popupClickHandler(event) {
+    if (event.target.matches(".popup_content"))
+        return;
+    if (event.target.matches(".dropdown_option"))
+        return;
+    
+    hidePopup();
+}
+
 
 var activeDropdown = null;
-window.addEventListener("click", event => {
-    hideAllDropdowns();
-    if (!event.target.classList.contains("dropdown_btn")) {
-        activeDropdown = null;
-        return;
-    }
-    if (activeDropdown === event.target) {
-        activeDropdown = null;
-        return;
-    }
-    showDropdown(event.target.id);
-    activeDropdown = event.target;
-});
+function clickHandler(event) {
+    dropdownClickHandler(event);
+    popupClickHandler(event);
+}
+
+function setPopup(buttonID, popupID) {
+    let button = document.getElementById(buttonID);
+    button.addEventListener("click", ()=>showPopup(popupID))
+}

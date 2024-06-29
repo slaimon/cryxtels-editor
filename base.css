@@ -6,6 +6,8 @@
     --editor-text: #9cdcfe;
     --lines-bg: #1a1a20;
     --lines-text: #9adafa;
+    --popup-bg: #545d83;
+    --popup-text: #a9e2ff;
     --button-active: #666666;
     --dropdown-bg: #3d435a;
     --dropdown-element-active: #555c7b;
@@ -76,6 +78,11 @@ html, body {
     font-family: monospace;
     font-size: large;
 
+    display: flex;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    text-align: center;
+    
     border-width: 1px;
     border-radius: 3px;
     padding: 2px;
@@ -169,8 +176,11 @@ html, body {
     position: absolute;
     background-color: var(--dropdown-bg);
     min-width: 160px;
+    width: fit-content;
+    white-space: nowrap;
+    text-align: left;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    border: 1px solid var(--editor-border);
+    border: 1px solid var(--lines-text);
     border-radius: 3px;
     z-index: 1;
 }
@@ -180,7 +190,9 @@ html, body {
     padding: 12px 16px;
     text-decoration: none;
     display: block;
+
     font-family: monospace;
+    font-size: large;
 
     -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none; /* Safari */
@@ -192,6 +204,46 @@ html, body {
 }
 .dropdown_option:hover {
     background-color: var(--dropdown-element-active);
+}
+
+.dropdown_icon {
+    height: 18px;
+    width: auto;
+    display: flex;
+    justify-content: center;
+    filter: invert(75%) sepia(51%) saturate(347%) hue-rotate(172deg) brightness(101%) contrast(99%);
+}
+
+.popup {
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: none;
+}
+.popup_content {
+    color: var(--popup-text);
+    background-color: var(--popup-bg);
+
+    border-radius: 8px;
+    margin: 10% auto;
+    padding: 20px;
+    width: 30%;
+
+    font-family: sans-serif;
+}
+
+.popup_content hr {
+    border-color: var(--popup-text);
+}
+
+.popup_content button {
+    display: block;
+    margin: 0 auto;
 }
 
 .show {display:block;}
