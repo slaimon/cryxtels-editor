@@ -7,7 +7,8 @@
     --lines-bg: #1a1a20;
     --lines-text: #9adafa;
     --popup-bg: #545d83;
-    --popup-text: #a9e2ff;
+    --popup-text: #d0ebf9;
+    --popup-element-active: #7597a9;
     --button-active: #666666;
     --dropdown-bg: #3d435a;
     --dropdown-element-active: #555c7b;
@@ -26,7 +27,7 @@ html, body {
     background-color: var(--page-bg);
 }
 
-.main {
+div.main {
     height: 100%;
     width: 100%;
     display: flex;
@@ -36,7 +37,7 @@ html, body {
     flex-wrap: wrap;
 }
 
-.editor_wrapper {
+div.editor_wrapper {
     height: 100%;
     width: 40%;
     display: flex;
@@ -48,12 +49,12 @@ html, body {
     box-shadow: 0px 4px 30px rgba(0, 0, 0, 0.5);
 }
 
-.viewer_wrapper {
+div.viewer_wrapper {
     height: 100%;
     width: 60%;
 }
 
-.editor_menubar {
+div.editor_menubar {
     height: fit-content;
     width: 100%;
 
@@ -174,11 +175,15 @@ html, body {
 .dropdown_content {
     display: none;
     position: absolute;
+    flex-direction: column;
+    align-items: center;
+    justify-content: left;
     background-color: var(--dropdown-bg);
-    min-width: 160px;
     width: fit-content;
+    
     white-space: nowrap;
     text-align: left;
+
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     border: 1px solid var(--lines-text);
     border-radius: 3px;
@@ -189,18 +194,9 @@ html, body {
     color: var(--page-text);
     padding: 12px 16px;
     text-decoration: none;
-    display: block;
 
     font-family: monospace;
     font-size: large;
-
-    -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari */
-     -khtml-user-select: none; /* Konqueror HTML */
-       -moz-user-select: none; /* Old versions of Firefox */
-        -ms-user-select: none; /* Internet Explorer/Edge */
-            user-select: none; /* Non-prefixed version, currently
-                                  supported by Chrome, Edge, Opera and Firefox */
 }
 .dropdown_option:hover {
     background-color: var(--dropdown-element-active);
@@ -214,7 +210,15 @@ html, body {
     filter: invert(75%) sepia(51%) saturate(347%) hue-rotate(172deg) brightness(101%) contrast(99%);
 }
 
-.popup {
+.object_icon {
+    height: 75px;
+    width: auto;
+    display: flex;
+    justify-content: center;
+    filter: invert(75%) sepia(51%) saturate(347%) hue-rotate(172deg) brightness(101%) contrast(99%);
+}
+
+.popup_container {
     position: fixed;
     z-index: 1;
     left: 0;
@@ -223,27 +227,84 @@ html, body {
     height: 100%;
     overflow: auto;
     background-color: rgba(0, 0, 0, 0.4);
+    
     display: none;
+    align-items: center;
+    justify-content: center;
 }
-.popup_content {
+.popup_window {
     color: var(--popup-text);
     background-color: var(--popup-bg);
 
     border-radius: 8px;
-    margin: 10% auto;
-    padding: 20px;
-    width: 30%;
+    width: 70%;
+    height: 75%;
 
     font-family: sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
-.popup_content hr {
+.popup_window hr {
     border-color: var(--popup-text);
+    margin: 0;
+    align-self: stretch;
 }
 
-.popup_content button {
+.popup_window button {
     display: block;
     margin: 0 auto;
 }
 
-.show {display:block;}
+.selector_options {
+    width: 100%;
+    height: 90%;
+    overflow-y: scroll;
+}
+
+.selector_options ul {
+    display: flex;
+    flex-direction: column;
+}
+
+.selector_item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+
+    border: 1px solid var(--editor-border);
+}
+
+.selector_item:hover {
+    background-color: var(--popup-element-active);
+}
+
+.selector_data {
+    color: var(--editor-text);
+    margin: 1em 1em;
+}
+
+.selector_name {
+    font-size: large;
+    font-style: bold;
+}
+
+.selector_author {
+    font-size: medium;
+    font-style: italic;
+}
+
+.show {display:flex;}
+
+.noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}

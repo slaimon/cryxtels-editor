@@ -22,23 +22,23 @@
                 <div class="editor_menu dropdown_menu">
                     <button id="load_btn" class="editor_menubtn dropdown_btn">
                         Load
-                        <img src="arrowhead.svg" class="dropdown_icon"></img>
+                        <img src="./icons/arrowhead.svg" class="dropdown_icon"></img>
                     </button>
-                    <div id="load_dropdown" class="dropdown_content">
+                    <div id="load_dropdown" class="popup dropdown_content">
                         <ul>
-                            <li id="pixelLoader" class="dropdown_option">Pixel...</li>
-                            <li id="modelLoader" class="dropdown_option">Model...</li>
+                            <p id="pixelLoader" class="dropdown_option noselect">Pixel...</p>
+                            <p id="modelLoader" class="dropdown_option noselect">Model...</p>
                         </ul>
                     </div>
                 </div>
                 <div class="editor_menu dropdown_menu">
                     <button id="save_btn" class="editor_menubtn dropdown_btn">
                         Save
-                        <img src="arrowhead.svg" class="dropdown_icon"></imf>
+                        <img src="./icons/arrowhead.svg" class="dropdown_icon"></imf>
                     </button>
-                    <div id="save_dropdown" class="dropdown_content">
-                        <p class="dropdown_option">Compile and Copy</p>
-                        <p class="dropdown_option">Export .OBJ Mesh</p>
+                    <div id="save_dropdown" class="popup dropdown_content">
+                        <p class="dropdown_option noselect">Compile and Copy</p>
+                        <p class="dropdown_option noselect">Export .OBJ Mesh</p>
                     </div>
                 </div>
                 <div class="editor_menu">
@@ -63,11 +63,14 @@
         </div>
         <div id="viewport" class="viewer_wrapper"></div>
     </div>
-    <div id="meshSelectionPopup" class="popup">
-        <div class="popup_content">
-            <h2>Select a mesh...</h2>
+    <div id="meshSelectionPopup" class="popup_container">
+        <div class="popup_window popup">
+            <h2 class="noselect">Select a mesh...</h2>
             <hr>
-            <p>ciao io sn simone</p>
+            <div class="selector_options">
+                <ul id="selectorList">
+                </ul>
+            </div>
         </div>
     </div>
 </body>
@@ -76,10 +79,13 @@
     import { Pixel } from "./pixel.js"
     import { createThreeLineMesh } from "./converter.js"
     import { initializeViewer } from "./viewer.js"
-    import { setPopup, clickHandler } from "./ui.js"
+    import { Popup, DropdownMenu, SelectorWindow, windowClickHandler } from "./ui.js"
 
-    window.addEventListener("click", event => clickHandler(event));
-    setPopup("pixelLoader", "meshSelectionPopup");
+    window.addEventListener("click", event => windowClickHandler(event));
+    new DropdownMenu("load_dropdown", "load_btn");
+    new DropdownMenu("save_dropdown", "save_btn");
+    new SelectorWindow("pixels", "meshSelectionPopup", "pixelLoader");
+    new SelectorWindow("models", "meshSelectionPopup", "modelLoader");
 
     const viewport = document.getElementById("viewport");
     const viewer = initializeViewer(viewport);

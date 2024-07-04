@@ -1,61 +1,101 @@
-export { setPopup, clickHandler }
+export { Popup, DropdownMenu, SelectorWindow, windowClickHandler }
 
-const controlledBy = {
-    "load_btn":"load_dropdown",
-    "save_btn":"save_dropdown"
-};
-function showDropdown(contentID) {
-    document.getElementById(contentID).classList.toggle("show");
-    activeDropdown = contentID;
-}
-function hideDropdown() {
-    if (activeDropdown === null)
-        return;
-    document.getElementById(activeDropdown).classList.toggle("show");
-    activeDropdown = null;
-}
-function dropdownClickHandler(event) {
-    let button = event.target.closest(".dropdown_btn");
-    if (!button) {
-        hideDropdown();
-        return;
-    }
-    if (activeDropdown === controlledBy[button.id]) {
-        hideDropdown();
-        return;
-    }
-    hideDropdown();
-    showDropdown(controlledBy[button.id]);
-}
+import examples from "./examples.js";
 
 var activePopup = null;
-function showPopup(popupID) {
-    document.getElementById(popupID).classList.toggle("show");
-    activePopup = popupID;
+
+class Popup {
+    constructor(elementID, buttonID) {
+        this.isPopup = true;
+        this.elementID = elementID;
+        this.element = document.getElementById(elementID);
+        this.buttonID = buttonID;
+        this.buttonElement = document.getElementById(buttonID);
+        
+        this.buttonElement.addEventListener("click", () => this.show());
+    }
+    show() {
+        this.element.classList.toggle("show");
+        if (activePopup) {
+            activePopup.hide();
+        }
+        activePopup = this;
+    }
+    hide() {
+        this.element.classList.toggle("show");
+        activePopup = null;
+    }
+    clickHandler(event) {
+        // close the popup if user clicked outside of it
+        if (!event.target.closest(".popup"))
+            this.hide();
+    }
 }
-function hidePopup() {
-    if (activePopup === null)
-        return;
-    document.getElementById(activePopup).classList.toggle("show");
-    activePopup = null;
+
+class DropdownMenu extends Popup {
+    constructor(elementID, buttonID) {
+        super(elementID, buttonID);
+        this.isDropdownMenu = true;
+    }
+    clickHandler(event) {
+        super.clickHandler();
+        if (activePopup.buttonID == this.buttonID) {
+            this.hide();
+            return;
+        }
+    }
 }
-function popupClickHandler(event) {
-    if (event.target.matches(".popup_content"))
-        return;
-    if (event.target.matches(".dropdown_option"))
-        return;
+
+class SelectorWindow extends Popup {
+    constructor(type, elementID, buttonID) {
+        super(elementID, buttonID);
+        this.isSelectorWindow = true;
+
+        // HTML element where all objects of this class are appended
+        this.baseElement = document.getElementById("selectorList");
+
+        this.listElement = document.createElement("div");
+        for (const example of examples[type]) {
+            let listItem = document.createElement("li");
+            listItem.classList.add("selector_item", "noselect");
     
-    hidePopup();
+            let icon = document.createElement("img");
+            icon.setAttribute("src", "./icons/object-icon.svg");
+            icon.classList.add("object_icon");
+            listItem.appendChild(icon);
+    
+            let name = document.createElement("p");
+            name.innerHTML = example.name;
+            name.classList.add("selector_data", "selector_name");
+            listItem.appendChild(name);
+    
+            let author = document.createElement("p");
+            author.innerHTML = "by "+ example.author;
+            author.classList.add("selector_data", "selector_author");
+            listItem.appendChild(author);
+    
+            this.listElement.appendChild(listItem);
+        }
+    }
+    show() {
+        super.show();
+        this.baseElement.appendChild(this.listElement);
+    }
+    hide() {
+        super.hide();
+        this.baseElement.removeChild(this.listElement);
+    }
+    clickHandler(event) {
+        super.clickHandler(event);
+        if (event.target.closest("selector_item"));
+            this.hide();
+    }
 }
 
 
-var activeDropdown = null;
-function clickHandler(event) {
-    dropdownClickHandler(event);
-    popupClickHandler(event);
+function windowClickHandler(event) {
+    if (activePopup)
+        activePopup.clickHandler();
 }
 
-function setPopup(buttonID, popupID) {
-    let button = document.getElementById(buttonID);
-    button.addEventListener("click", ()=>showPopup(popupID))
-}
+// clickHandlers lack their arguments, but once I add them in everything stops working!! Why??
