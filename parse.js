@@ -291,7 +291,7 @@ function applyCommand(pixel, command) {
     return 0;
 }
 
-class ParsedData {
+class CodeIterator {
     constructor(text) {
         this.lines = text.split("\n");
         this.line_number = 1;
@@ -318,8 +318,8 @@ class ParsedData {
     }
 }
 
-// the Preamble is the part where commands like "SEED", "AUTHOR" and "TYPE" or "MODEL" are found
-function parsePreamble(code, pixel) {
+// the Header is the part where commands like "SEED", "AUTHOR" and "TYPE" or "MODEL" are found
+function parseHeader(code, pixel) {
     let seedSet = false;
     let authorSet = false;
 
@@ -366,7 +366,7 @@ function parsePreamble(code, pixel) {
                     return pixel;
                 }
                 else {
-                    // throw new error if we're being pedantic
+                    // throw new error if we're being pedantic ("missing endpixel declaration")
                     code.rewind(1);
                     return pixel;
                 }
@@ -425,9 +425,9 @@ function parseBody(code, pixel) {
 function parse(txt, env={}) {
     environment = env;
     let pixel = new Pixel();
-    let code = new ParsedData(txt);
+    let code = new CodeIterator(txt);
 
-    pixel = parsePreamble(code, pixel);
+    pixel = parseHeader(code, pixel);
     pixel = parseBody(code, pixel);
 
     return pixel;
