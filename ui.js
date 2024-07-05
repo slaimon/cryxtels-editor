@@ -97,7 +97,7 @@ class SelectorWindow extends Popup {
         if (item) {
             let name = item.querySelector(".selector_name").innerHTML;
             let code = examples[this.type].find(x=>x.name===name).source;
-            textArea.innerHTML = code;
+            textArea.value = code;
             this.hide();
         }
     }

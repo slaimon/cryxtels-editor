@@ -8,10 +8,10 @@
     --lines-text: #9adafa;
     --popup-bg: #545d83;
     --popup-text: #d0ebf9;
-    --popup-element-active: #7597a9;
+    --popup-element-active: #646d93;
     --button-active: #666666;
     --dropdown-bg: #3d435a;
-    --dropdown-element-active: #555c7b;
+    --dropdown-element-active: #4d536a;
 }
 
 /* Reset styles */
@@ -237,7 +237,7 @@ div.editor_menubar {
     background-color: var(--popup-bg);
 
     border-radius: 8px;
-    width: 70%;
+    width: 50%;
     height: 75%;
 
     font-family: sans-serif;
