@@ -2,6 +2,8 @@ export { Popup, DropdownMenu, SelectorWindow, windowClickHandler }
 
 import examples from "./examples.js";
 
+const textArea = document.getElementById("textarea");
+
 var activePopup = null;
 
 class Popup {
@@ -12,7 +14,10 @@ class Popup {
         this.buttonID = buttonID;
         this.buttonElement = document.getElementById(buttonID);
         
-        this.buttonElement.addEventListener("click", () => this.show());
+        this.buttonElement.addEventListener("click", (event) => {
+            event.stopPropagation();
+            this.show()
+        });
     }
     show() {
         this.element.classList.toggle("show");
@@ -38,7 +43,7 @@ class DropdownMenu extends Popup {
         this.isDropdownMenu = true;
     }
     clickHandler(event) {
-        super.clickHandler();
+        super.clickHandler(event);
         if (activePopup.buttonID == this.buttonID) {
             this.hide();
             return;
@@ -50,6 +55,7 @@ class SelectorWindow extends Popup {
     constructor(type, elementID, buttonID) {
         super(elementID, buttonID);
         this.isSelectorWindow = true;
+        this.type = type;
 
         // HTML element where all objects of this class are appended
         this.baseElement = document.getElementById("selectorList");
@@ -82,20 +88,25 @@ class SelectorWindow extends Popup {
         this.baseElement.appendChild(this.listElement);
     }
     hide() {
-        super.hide();
         this.baseElement.removeChild(this.listElement);
+        super.hide();
     }
     clickHandler(event) {
         super.clickHandler(event);
-        if (event.target.closest("selector_item"));
+        let item = event.target.closest(".selector_item"); 
+        if (item) {
+            let name = item.querySelector(".selector_name").innerHTML;
+            let code = examples[this.type].find(x=>x.name===name).source;
+            textArea.innerHTML = code;
             this.hide();
+        }
     }
 }
 
 
 function windowClickHandler(event) {
     if (activePopup)
-        activePopup.clickHandler();
+        activePopup.clickHandler(event);
 }
 
 // clickHandlers lack their arguments, but once I add them in everything stops working!! Why??
