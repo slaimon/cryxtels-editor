@@ -39,6 +39,7 @@ div.main {
 
 div.editor_wrapper {
     height: 100%;
+    min-width: 300px;
     width: 40%;
     display: flex;
     flex-direction: column;
@@ -210,14 +211,6 @@ div.editor_menubar {
     filter: invert(75%) sepia(51%) saturate(347%) hue-rotate(172deg) brightness(101%) contrast(99%);
 }
 
-.object_icon {
-    height: 75px;
-    width: auto;
-    display: flex;
-    justify-content: center;
-    filter: invert(75%) sepia(51%) saturate(347%) hue-rotate(172deg) brightness(101%) contrast(99%);
-}
-
 .popup_container {
     position: fixed;
     z-index: 1;
@@ -237,6 +230,7 @@ div.editor_menubar {
     background-color: var(--popup-bg);
 
     border-radius: 8px;
+    min-width: 400px;
     width: 50%;
     height: 75%;
 
@@ -244,7 +238,7 @@ div.editor_menubar {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: left;
 }
 
 .popup_window hr {
@@ -276,6 +270,22 @@ div.editor_menubar {
     justify-content: flex-start;
 
     border: 1px solid var(--editor-border);
+}
+
+.selector_icon {
+    height: 75px;
+    width: auto;
+    display: flex;
+    justify-content: center;
+    filter: invert(75%) sepia(51%) saturate(347%) hue-rotate(172deg) brightness(101%) contrast(99%);
+}
+
+.selector_name {
+    width: 200px;
+}
+
+.selector_author {
+    width: 100px;
 }
 
 .selector_item:hover {

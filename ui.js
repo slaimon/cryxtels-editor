@@ -15,9 +15,12 @@ class Popup {
         this.buttonElement = document.getElementById(buttonID);
         
         this.buttonElement.addEventListener("click", (event) => {
-            event.stopPropagation();
-            this.show()
+            this.onActivation(event);
         });
+    }
+    onActivation(event) {
+        event.stopPropagation();
+        this.show()
     }
     show() {
         this.element.classList.toggle("show");
@@ -42,11 +45,13 @@ class DropdownMenu extends Popup {
         super(elementID, buttonID);
         this.isDropdownMenu = true;
     }
-    clickHandler(event) {
-        super.clickHandler(event);
-        if (activePopup.buttonID == this.buttonID) {
+    onActivation(event) {
+        event.stopPropagation();
+        if (activePopup === this) {
             this.hide();
-            return;
+        }
+        else {
+            this.show();
         }
     }
 }
@@ -67,7 +72,7 @@ class SelectorWindow extends Popup {
     
             let icon = document.createElement("img");
             icon.setAttribute("src", "./icons/object-icon.svg");
-            icon.classList.add("object_icon");
+            icon.classList.add("selector_icon");
             listItem.appendChild(icon);
     
             let name = document.createElement("p");
@@ -93,11 +98,11 @@ class SelectorWindow extends Popup {
     }
     clickHandler(event) {
         super.clickHandler(event);
-        let item = event.target.closest(".selector_item"); 
-        if (item) {
-            let name = item.querySelector(".selector_name").innerHTML;
-            let code = examples[this.type].find(x=>x.name===name).source;
-            textArea.value = code;
+        let selectedItem = event.target.closest(".selector_item"); 
+        if (selectedItem) {
+            let itemName = selectedItem.querySelector(".selector_name").innerHTML;
+            let sourceCode = examples[this.type].find(x=>x.name===itemName).source;
+            textArea.value = sourceCode;
             this.hide();
         }
     }
@@ -108,5 +113,3 @@ function windowClickHandler(event) {
     if (activePopup)
         activePopup.clickHandler(event);
 }
-
-// clickHandlers lack their arguments, but once I add them in everything stops working!! Why??
