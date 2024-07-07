@@ -83,13 +83,6 @@ function getOrientation(i) {
 function applyCommand(pixel, command) {
     switch(command[0].toLowerCase()) {
 
-        // these commands should only appear in the preamble
-        case "seed":
-        case "type":
-        case "model": {
-            throw new Error(`Syntax error: declaration of ${command[0]} inside definition body (line ${line_number})`);
-        }
-
         // unimplemented commands
         case "detail":
         case "associated file":
@@ -394,9 +387,19 @@ function parseBody(code, pixel) {
                     return s;
                 });
         
+        // the following commands should only appear in the Header
+        switch(command[0].toLowerCase()) {
+            case "seed":
+            case "author":
+            case "type":
+            case "model": {
+                throw new Error(`Syntax error: declaration of ${command[0]} inside definition body (line ${line_number})`);
+            }
+        }
+
         // allow commas in the last argument of "text" command
         let skipConversion = false
-        if (command[0] === "text" && command.length > 8) {
+        if (command[0].toLowerCase() === "text" && command.length > 8) {
             skipConversion = true;
             for (let i=9; i<command.length; i++) {
                 command[8] += ","+command[i];
