@@ -98,10 +98,7 @@ function applyCommand(pixel, command) {
         }
 
         case "author": {
-            if (command[1] !== "=") {
-                throw new Error(`Syntax error: unexpected token ${command[1]}, expected '=' (line ${line_number})`);
-            }
-            pixel.setAuthor(command[2]);
+            pixel.setAuthor(command[1]);
             break;
         }
 
