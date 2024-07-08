@@ -22,23 +22,25 @@
                 <div class="editor_menu dropdown_menu">
                     <button id="load_btn" class="editor_menubtn dropdown_btn">
                         Load
-                        <img src="./icons/arrowhead.svg" class="dropdown_icon"></img>
+                        <img src="./icons/arrowhead.svg" title="enter the load menu" class="dropdown_icon"></img>
                     </button>
                     <div id="load_dropdown" class="popup dropdown_content">
-                        <ul>
-                            <p id="pixelLoader" class="dropdown_option noselect">Pixel...</p>
-                            <p id="modelLoader" class="dropdown_option noselect">Model...</p>
+                        <ul class="nobullet">
+                            <li id="pixelLoader" class="dropdown_option noselect">Pixel...</li>
+                            <li id="modelLoader" class="dropdown_option noselect">Model...</li>
                         </ul>
                     </div>
                 </div>
                 <div class="editor_menu dropdown_menu">
                     <button id="save_btn" class="editor_menubtn dropdown_btn">
                         Save
-                        <img src="./icons/arrowhead.svg" class="dropdown_icon"></imf>
+                        <img src="./icons/arrowhead.svg" title="enter the save menu" class="dropdown_icon"></imf>
                     </button>
                     <div id="save_dropdown" class="popup dropdown_content">
-                        <p class="dropdown_option noselect">Compile and Copy</p>
-                        <p class="dropdown_option noselect">Export .OBJ Mesh</p>
+                        <ul class="nobullet">
+                            <li id="copy_btn" class="dropdown_option noselect">Compile and Copy</li>
+                            <li id="download_btn" class="dropdown_option noselect">Export .OBJ Mesh</li>
+                        </ul>
                     </div>
                 </div>
                 <div class="editor_menu">
@@ -67,9 +69,7 @@
         <div class="popup_window popup">
             <h2 class="noselect">Select a mesh...</h2>
             <hr>
-            <div class="selector_options">
-                <ul id="selectorList">
-                </ul>
+            <div id="selectorListContainer" class="selector_options">
             </div>
             <hr>
         </div>
@@ -92,6 +92,9 @@
     const viewer = initializeViewer(viewport);
     const textarea = document.getElementById("textarea");
     const editor_btn = document.getElementById("editor_btn");
+    const download_btn = document.getElementById("download_btn");
+    const copy_btn = document.getElementById("copy_btn");
+
     function runDefinition() {
         let environment = {
             "%d": Math.floor(Math.random() * 500)

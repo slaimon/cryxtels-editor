@@ -56,7 +56,6 @@ div.viewer_wrapper {
 }
 
 div.editor_menubar {
-    height: fit-content;
     width: 100%;
 
     display: flex;
@@ -180,7 +179,6 @@ div.editor_menubar {
     align-items: center;
     justify-content: left;
     background-color: var(--dropdown-bg);
-    width: fit-content;
     
     white-space: nowrap;
     text-align: left;
@@ -317,4 +315,8 @@ div.editor_menubar {
         -ms-user-select: none; /* Internet Explorer/Edge */
             user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome, Edge, Opera and Firefox */
+}
+
+ul.nobullet {
+    list-style-type: none;
 }

@@ -63,34 +63,39 @@ class SelectorWindow extends Popup {
         this.type = type;
 
         // HTML element where all objects of this class are appended
-        this.baseElement = document.getElementById("selectorList");
+        this.baseElement = document.getElementById("selectorListContainer");
+        this.listElement = document.createElement("ul");
+        this.listElement.classList.add("nobullet");
 
-        this.listElement = document.createElement("div");
         for (const example of examples[type]) {
             let listItem = document.createElement("li");
-            listItem.classList.add("selector_item", "noselect");
-    
+            let listItemContainer = document.createElement("div");
+            listItemContainer.classList.add("selector_item", "noselect");
+
             let icon = document.createElement("img");
             icon.setAttribute("src", "./icons/object-icon.svg");
+            icon.setAttribute("title", "load this model");
             icon.classList.add("selector_icon");
-            listItem.appendChild(icon);
+            listItemContainer.appendChild(icon);
     
             let name = document.createElement("p");
             name.innerHTML = example.name;
             name.classList.add("selector_data", "selector_name");
-            listItem.appendChild(name);
+            listItemContainer.appendChild(name);
     
             let author = document.createElement("p");
             author.innerHTML = "by "+ example.author;
             author.classList.add("selector_data", "selector_author");
-            listItem.appendChild(author);
+            listItemContainer.appendChild(author);
     
+            listItem.appendChild(listItemContainer);
             this.listElement.appendChild(listItem);
         }
     }
     show() {
         super.show();
         this.baseElement.appendChild(this.listElement);
+        this.baseElement.scrollTop = 0;
     }
     hide() {
         this.baseElement.removeChild(this.listElement);
