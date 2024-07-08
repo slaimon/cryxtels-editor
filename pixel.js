@@ -67,6 +67,7 @@ class Pixel extends Shape {
         obj += `o ${this.name}\n`;
 
         this.Rotate(vector_constants.ZAxis, Math.PI);
+        this.Scale(0.03, {inputType:"scalar"});
         for (let v of this.vertices.concat(this.dots)) {
             obj += `v ${v.x} ${v.y} ${v.z}`;
             obj += "\n";

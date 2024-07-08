@@ -76,6 +76,29 @@ class Shape {
         );
     }
 
+    Scale (vector, mode) {
+        if (mode===undefined) {
+            throw new Error(`Error while scaling shape "${this.name}": Scaling mode not selected`);
+        }
+        switch(mode["inputType"]) {
+            case "vector": {
+                this.vertices = this.vertices.map(
+                    v => v.multiply(vector)
+                );
+                break;
+            }
+            case "scalar": {
+                this.vertices = this.vertices.map(
+                    v => v.multiplyScalar(vector)
+                );
+                break;
+            }
+            default: {
+                throw new Error(`Error while scaling shape "${this.name}": Invalid scaling mode "${mode["inputType"]}"`);
+            }
+        }
+    }
+
     Rotate (axis, angle) {
         let quaternion = new THREE.Quaternion();
         quaternion.setFromAxisAngle(axis, angle);
@@ -101,7 +124,7 @@ class Shape {
                 this.Rotate(vector_constants.ZAxis, Math.PI/2.0);
                 break;
             }
-            default: throw new Error(`${this.name} Error: invalid orientation plane "${plane}"`);
+            default: throw new Error(`Error while orienting shape "${this.name}": Invalid orientation plane "${plane}"`);
         }
     }
 }
@@ -171,7 +194,7 @@ class Rectangle extends Shape {
                 this.Rotate(vector_constants.YAxis, Math.PI/2.0);
                 break;
             }
-            default: throw new Error(`${this.name} Error: invalid orientation plane "${plane}"`);
+            default: throw new Error(`Error while orienting shape "Rectangle": Invalid orientation plane "${plane}"`);
         }
     }
 }
@@ -223,7 +246,7 @@ class Grid extends Shape {
 
         tiles = Math.floor(tiles);
         if ( tiles < 0 )
-            throw new Error(`GRID ERROR: invalid argument tiles = ${tiles}`);
+            throw new Error(`Error while creating shape "Grid": invalid argument tiles = ${tiles}`);
         
         let r = [0, 0, 0];
         r[0] -= (tiles*width) / 2;
@@ -260,7 +283,7 @@ class Grid extends Shape {
                 this.Rotate(vector_constants.YAxis, Math.PI/2.0);
                 break;
             }
-            default: throw new Error(`${this.name} Error: invalid orientation plane "${plane}"`);
+            default: throw new Error(`Error while orienting shape "Grid": Invalid orientation plane "${plane}"`);
         }
     }
 }
@@ -272,7 +295,7 @@ class Spiral extends Shape {
         super("Spiral");
 
         if (step<=0) {
-            throw new Error(`SPIRAL ERROR: Invalid argument step = ${step}`);
+            throw new Error(`Error while creating shape "Spiral": Invalid argument step = ${step}`);
         }
         let a = step;
         let k0 = 0;
@@ -303,7 +326,7 @@ class Ellipse extends Shape {
         super("Ellipse");
 
         if (step <= 0) {
-            throw new Error(`ELLIPSE ERROR: Invalid argument step = ${step}`);
+            throw new Error(`Error while creating shape "Ellipse": Invalid argument step = ${step}`);
         }
         if (step > 90)
             step = 90;
@@ -330,7 +353,7 @@ class DotEllipse extends Shape {
         super("DotEllipse");
 
         if (step <= 0) {
-            throw new Error(`DOTELLIPSE ERROR: Invalid argument step = ${step}`);
+            throw new Error(`Error while creating shape "DotEllipse": Invalid argument step = ${step}`);
         }
         if (step > 90)
             step = 90;
@@ -348,7 +371,7 @@ class DotSphere extends Shape {
         super("DotSphere");
 
         if (step <= 0) {
-            throw new Error(`DOTSPHERE ERROR: Invalid argument step = ${step}`);
+            throw new Error(`Error while creating shape "DotSphere": Invalid argument step = ${step}`);
         }
         if (step > 90)
             step = 90;
@@ -372,7 +395,7 @@ class GridSphere extends Shape {
         super("GridSphere");
 
         if (step <= 0) {
-            throw new Error(`GRIDSPHERE ERROR: Invalid argument step = ${step}`);
+            throw new Error(`Error while creating shape "GridSphere": Invalid argument step = ${step}`);
         }
         if (step > 90)
             step = 90;
@@ -479,7 +502,7 @@ class Wave extends Shape {
                 this.Rotate(vector_constants.YAxis, -Math.PI/2.0);
                 break;
             }
-            default: throw new Error(`${this.name} Error: invalid orientation plane "${plane}"`);
+            default: throw new Error(`Error while orienting shape "Wave": Invalid orientation plane "${plane}"`);
         }
     }
 }
@@ -489,7 +512,7 @@ class Column extends Shape {
         super("Column");
 
         if (step <= 0) {
-            throw new Error(`COLUMN ERROR: invalid argument step = ${step}`);
+            throw new Error(`Error while creating shape "Column": invalid argument step = ${step}`);
         }
         if (step > 90) {
             step = 90;
