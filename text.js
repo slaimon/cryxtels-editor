@@ -1,4 +1,4 @@
-import * as Primitives from "./primitives.js"
+import {Shape, Line} from "./primitives.js"
 import {tsin, tcos} from "./util.js"
 export {Text}
 
@@ -86,7 +86,7 @@ function prepareValidString(str) {
     return str;
 }
 
-class Text extends Primitives.Primitive {
+class Text extends Shape {
     constructor (str, c, scale_x, scale_y, alpha, beta)  {
         super(`text:"${str}"`);
 
@@ -131,7 +131,7 @@ class Text extends Primitives.Primitive {
                 ly = py * tcos(alpha)                  + c[1];
                 lx = px * tcos(beta) + z2 * tsin(beta) + c[0];
 
-                this.Add(new Primitives.Line([sx, sy, sz], [lx, ly, lz]));
+                this.Add(new Line([sx, sy, sz], [lx, ly, lz]));
                 f += 4;
             }
 

@@ -1,7 +1,7 @@
 import {tsin, tcos, vec3, vector_constants} from "./util.js"
 import * as THREE from "three"
 export {
-    Primitive,
+    Shape,
     Link,
     Dot,
     Line,
@@ -22,8 +22,8 @@ export {
 // if two vertices have a distance less than this, they should be merged into one
 const merge_threshold = 0.0;
 
-class Primitive {
-    constructor (name="Primitive") {
+class Shape {
+    constructor (name="Shape") {
         this.name = name;
         this.vertices = [];
         this.lines = [];
@@ -41,10 +41,10 @@ class Primitive {
     }
 
     // merge this primitive with another one without vertex duplication
-    Add (primitive) {
+    Add (shape) {
         let relocationMap = new Map();
 
-        for (const [i, vertex] of primitive.vertices.entries()) {
+        for (const [i, vertex] of shape.vertices.entries()) {
             let index_new = this.vertices.findIndex(v => v.distanceTo(vertex) <= merge_threshold);
             if (index_new === -1) {
                 this.vertices.push(vertex);
@@ -55,11 +55,11 @@ class Primitive {
         }
 
         this.lines = this.lines.concat(
-            primitive.lines.map(l =>
+            shape.lines.map(l =>
                 l.map(x=>relocationMap.get(x)))
         );
 
-        this.dots = this.dots.concat(primitive.dots);
+        this.dots = this.dots.concat(shape.dots);
     }
 
     Translate (vector) {
@@ -109,9 +109,9 @@ class Primitive {
 // "linking" a vertex list is an operation often performed by the render functions in cryxtels.
 // some models are represented as arrays of vertices and what the renderer does is simply:
 // take two vertices from the array, draw a line between them, repeat.
-class Link extends Primitive {
-    constructor (vlist) {
-        super("Link");
+class Link extends Shape {
+    constructor (vlist, name="Link") {
+        super(name);
 
         let v= [];
         for (let i=0; i<=vlist.length-3; i+=3) {
@@ -127,14 +127,14 @@ class Link extends Primitive {
     }
 }
 
-class Dot extends Primitive {
+class Dot extends Shape {
     constructor (c) {
         super("Dot");
         this.dots = [vec3(c)];
     }
 }
 
-class Line extends Primitive {
+class Line extends Shape {
     constructor (start, end) {
         super("Line");
         this.vertices = [vec3(start), vec3(end)];
@@ -142,7 +142,7 @@ class Line extends Primitive {
     }
 }
 
-class Rectangle extends Primitive {
+class Rectangle extends Shape {
     constructor (c, hx, hy, plane="xy") {
         super("Rectangle");
 
@@ -176,7 +176,7 @@ class Rectangle extends Primitive {
     }
 }
 
-class Box extends Primitive {
+class Box extends Shape {
     constructor (c, hx, hy, hz) {
         super("Box");
 
@@ -195,7 +195,7 @@ class Box extends Primitive {
     }
 }
 
-class Asterisk extends Primitive {
+class Asterisk extends Shape {
     constructor (c, radius, step) {
         super("Asterisk");
 
@@ -217,7 +217,7 @@ class Asterisk extends Primitive {
 }
 
 // always generates a "square" grid, but the tiles themselves may not be squares
-class Grid extends Primitive {
+class Grid extends Shape {
     constructor (c, width, height, tiles, plane) {
         super("Grid");
 
@@ -265,7 +265,7 @@ class Grid extends Primitive {
     }
 }
 
-class Spiral extends Primitive {
+class Spiral extends Shape {
     // the number n of vertices in the spiral is n = 1080/step - 1
     // the radius of the spiral is R = increment*n
     constructor (c, increment, plane, step) {
@@ -298,7 +298,7 @@ class Spiral extends Primitive {
     }
 }
 
-class Ellipse extends Primitive {
+class Ellipse extends Shape {
     constructor (c, width, height, plane, step) {
         super("Ellipse");
 
@@ -325,7 +325,7 @@ class Ellipse extends Primitive {
     }
 }
 
-class DotEllipse extends Primitive {
+class DotEllipse extends Shape {
     constructor (c, width, height, plane, step) {
         super("DotEllipse");
 
@@ -343,7 +343,7 @@ class DotEllipse extends Primitive {
     }
 }
 
-class DotSphere extends Primitive {
+class DotSphere extends Shape {
     constructor (c, radius, ratio, step) {
         super("DotSphere");
 
@@ -367,7 +367,7 @@ class DotSphere extends Primitive {
     }
 }
 
-class GridSphere extends Primitive {
+class GridSphere extends Shape {
     constructor (c, radius, ratio, step) {
         super("GridSphere");
 
@@ -403,7 +403,7 @@ class GridSphere extends Primitive {
     }
 }
 
-class Torus extends Primitive {
+class Torus extends Shape {
     // the original documentation omits the PLANE argument
     constructor (c, radius, section, plane, step) {
         super("Torus");
@@ -442,7 +442,7 @@ class Torus extends Primitive {
     }
 }
 
-class Wave extends Primitive {
+class Wave extends Shape {
     constructor (c, scale, amplitude, plane, step) {
         super("Wave");
 
@@ -484,7 +484,7 @@ class Wave extends Primitive {
     }
 }
 
-class Column extends Primitive {
+class Column extends Shape {
     constructor (c, base_radius, top_radius, height, step) {
         super("Column");
 

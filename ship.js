@@ -1,4 +1,4 @@
-import { Primitive, Link, Rectangle } from "./primitives.js"
+import { Shape, Link, Rectangle } from "./primitives.js"
 export { Ship }
 
 // pannello informazioni
@@ -84,7 +84,7 @@ const flyOUT3 =
      40, 16, -55,  10, 16, -43
 ];
 
-class Ship extends Primitive {
+class Ship extends Shape {
     constructor() {
         super("Ship");
         this.Add(new Link(flyIN1));

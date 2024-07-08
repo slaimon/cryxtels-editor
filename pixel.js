@@ -1,4 +1,4 @@
-import { Primitive } from "./primitives.js";
+import { Shape } from "./primitives.js";
 import { vector_constants, vec3 } from "./util.js";
 import { Ship } from "./ship.js";
 import * as THREE from "three";
@@ -7,7 +7,7 @@ export {Pixel}
 
 const sw_version = "cryxtels2obj v0.4";
 
-class Pixel extends Primitive {
+class Pixel extends Shape {
     constructor(name="Pixel") {
         super(name);
         this.primitives = [];
