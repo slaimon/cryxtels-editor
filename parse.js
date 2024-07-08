@@ -1,7 +1,7 @@
 export {parse}
-import * as Primitives from "./primitives.js"
-import {Text} from "./text.js"
-import {Pixel} from "./pixel.js"
+import * as Primitives from "./shapes/primitives.js"
+import {Text} from "./shapes/text.js"
+import {Pixel} from "./shapes/pixel.js"
 
 const allowedVariableNameRegex = /[a-zA-Z_][0-9a-zA-Z_]*/;
 const reservedKeywords = [
