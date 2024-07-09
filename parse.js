@@ -52,10 +52,10 @@ function checkParams(command) {
         (minArity+1);
 
     if (command.length-1 < minArity) {
-        throw new Error(`Syntax error: not enough parameters given (line ${line_number})\ncommand "${params[0]}" requires at least ${minArity}, have ${command.length-1}`);
+        throw new Error(`Syntax error: not enough parameters given (line ${line_number})\ncommand "${keyword}" requires at least ${minArity}, have ${command.length-1}`);
     }
     if (command.length-1 > maxArity) {
-        throw new Error(`Syntax error: too many parameters given (line ${line_number})\ncommand "${params[0]}" requires at most ${maxArity}, have ${command.length-1}`);
+        throw new Error(`Syntax error: too many parameters given (line ${line_number})\ncommand "${keyword}" requires at most ${maxArity}, have ${command.length-1}`);
     }
 }
 

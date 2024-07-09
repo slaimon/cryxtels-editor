@@ -152,7 +152,7 @@ export default [
         },
         {
             "names":["wave"],
-            "arity": 6,
+            "arity": 7,
             "args": ["x","y","z","scale","amplitude", "plane","step"],
             "isScalable":true,
             "scalableArgs":[1,2,3,4,5],
@@ -190,7 +190,7 @@ export default [
         },
         {
             "names":["donut","torus"],
-            "arity":6,
+            "arity":7,
             "args":["x","y","z","radius","section","plane","step"],
             "isScalable":true,
             "scalableArgs":[1,2,3,4,5],
@@ -227,7 +227,7 @@ export default [
             "separator":","
         },
         {
-            "names":["solid block"],
+            "names":["solidbox"],
             "arity":6,
             "args":["x","y","z","width","height","depth"],
             "isScalable":true,
