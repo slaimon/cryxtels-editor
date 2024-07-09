@@ -2,20 +2,17 @@ export default [
         {
             "names":["endpixel"],
             "arity": 0,
-            "isScalable": false,
             "separator": ","
         },
         {
             "names":["detail"],
             "arity": 0,
-            "isScalable": false,
             "separator": ","
         },
         {
             "names":["type"],
             "arity": 1,
             "args": ["typeNumber"],
-            "isScalable":false,
             "numericArgs":[1],
             "separator":" "
         },
@@ -24,14 +21,12 @@ export default [
             "arity": 1,
             "args": ["modelNumber"],
             "numericArgs":[1],
-            "isScalable":false,
             "separator":" "
         },
         {
             "names":["seed"],
             "arity": 1,
             "args": ["seed"],
-            "isScalable":false,
             "numericArgs":[1],
             "separator":"="
         },
@@ -39,8 +34,13 @@ export default [
             "names":["author"],
             "arity": 1,
             "args": ["author"],
-            "isScalable":false,
             "separator":"="
+        },
+        {
+            "names":["associated file"],
+            "arity": 1,
+            "args": ["filename"],
+            "separator":","
         },
         {
             "names":["total mass"],

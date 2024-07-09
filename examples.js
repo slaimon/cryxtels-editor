@@ -160,8 +160,16 @@ export default
         "name": "Bicycle Wheel",
         "author": "Fottifoh",
         "source": "AUTHOR = FOTTIFOH;\n\nTYPE 31;\ndock, 0, 100, -750, 1450, -1;\ncolumn, 0, 100, 0, 25, 1450, 10, 3;\ncolumn, 0, 0, 0, 25, 25, 2600, 60;\ncollision, 0, 0, 0, 25, 2600, 25;\ndetail;\ncolumn, 0, -100, 0, 1450, 25, 10, 3;\ndonut, 0, 0, 0, 1300, 200, 1, 4;\ndetail;\ndetail;\nsolidbox, 0,  80, -300, 50, 20, 50;\nsolidbox, 0,  60, -350, 50, 10, 50;\nsolidbox, 0,  40, -400, 50, 10, 50;\nsolidbox, 0,  20, -450, 50, 10, 50;\nsolidbox, 0,   0, -500, 50, 10, 50;\nsolidbox, 0, -20, -550, 50, 10, 50;\nsolidbox, 0, -40, -600, 50, 10, 50;\nsolidbox, 0, -60, -650, 50, 10, 50;\nsolidbox, 0, -80, -700, 50, 10, 50;\nsolidbox, 250, -90, -700, 200, 10, 50;\nsolidbox, 420, -120, -620, 30, 30, 30;\nsolidbox, 420, -180, -560, 30, 30, 30;\nsolidbox, 420, -240, -500, 30, 30, 30;\nsolidbox, 420, -300, -440, 30, 30, 30;\nsolidbox, 420, -360, -380, 30, 30, 30;\nsolidbox, 420, -420, -320, 30, 30, 30;\nsolidbox, 420, -480, -260, 30, 30, 30;\nsolidbox, 420, -540, -200, 30, 30, 30;\nsolidbox, 420, -600, -140, 30, 30, 30;\nsolidbox, 420, -660, -80, 30, 30, 30;\nsolidbox, 360, -720, -80, 30, 30, 30;\nsolidbox, 300, -780, -80, 30, 30, 30;\nsolidbox, 240, -840, -80, 30, 30, 30;\nsolidbox, 180, -900, -80, 30, 30, 30;\nsolidbox, 120, -960, -80, 30, 30, 30;\nsolidbox, 60, -1020, -80, 30, 30, 30;\nsolidbox, 0, -1080, -80, 30, 30, 30;\nsolidbox, -60, -1140, -80, 30, 30, 30;\nsolidbox, -120, -1200, -80, 30, 30, 30;\nsolidbox, -120, -1240, 30, 30, 10, 80;\nsolidbox, 0, -1255, 30, 90, 5, 80;\ntotal mass, 250000;\nendpixel;"
+      },
+      {
+        "name": "Beach",
+        "author": "Slaimon",
+        "source": "AUTHOR = Slaimon;\n\nTYPE 0;\ndock, 200, 0, -300, 500, 500;\nellipse, 0, 0, 0, 500, 500, 1, 4;\ncolumn, 200,-120,200, 1,1,240, 45, umbrella;\ncolumn, 200,-210,200,   170,1,60, 45;\ndonut, -250,-5,100, 50, 10, 1, 20, ringbuoy;\ndetail;\nwave, 0,0,0, 2.75,75, 1,10, sea;\nsolidbox, 150,-40,280, 100,5,50, recliner 1;\nsolidbox, 150,-40,120, 100,5,50, recliner 2;\nbox, 240,-18,160, 5,18,5, recliner legs 1;\nbox, 240,-18,80, 5,18,5;\nbox, 60,-18,160, 5,18,5;\nbox, 60,-18,80, 5,18,5;\nbox, 240,-18,320, 5,18,5, recliner legs 2;\nbox, 240,-18,240, 5,18,5;\nbox, 60,-18,320, 5,18,5;\nbox, 60,-18,240, 5,18,5;\ndetail;\nwave, -50,-5,-250, 0.5, 10, 1,30, sea waves;\nwave, -52,-3,-250, 0.5, 10, 1,30;\nwave, -170,-5,300, 0.5, 10, 1,30;\nwave, -172,-3,300, 0.5, 10, 1,30;\nwave, -150,-5,-80, 0.5, -10, 1,30;\nwave, -152,-3,-80, 0.5, -10, 1,30;\nwave, -250,-5,-300, 0.5, 10, 1,30;\nwave, -248,-2,-300, 0.5, 10, 1,30;\nwave, -380,-5,-30, 0.5, 10, 1,30;\nwave, -382,-3,-30, 0.5, 10, 1,30;\ndetail;\nrectangle, 150,-47,280, 80,50,1, towel 1 detail;\nrectangle, 150,-47,280, 75,50,1;\nrectangle, 150,-47,280, 70,50,1;\nrectangle, 165,-47,295, 5,5,1;\nrectangle, 165,-47,280, 5,5,1;\nrectangle, 165,-47,265, 5,5,1;\nrectangle, 150,-47,295, 5,5,1;\nrectangle, 150,-47,280, 5,5,1;\nrectangle, 150,-47,265, 5,5,1;\nrectangle, 135,-47,295, 5,5,1;\nrectangle, 135,-47,280, 5,5,1;\nrectangle, 135,-47,265, 5,5,1;\nrectangle, 150,-47,280, 15,15,1;\nellipse, 150,-47,120, 49,49,1,2, towel 2 detail;\nellipse, 150,-47,120, 47,47,1,2;\nspiral, 150,-47,120, 0.08,1,2;\nspiral, 150,-47,122, 0.08,1,2;\nwave, 75,-47,120, 0.28, 7, 1, 30;\nwave, 225,-47,120, 0.28, 7, 1, 30;\ntotal mass, 80000;\nendpixel;"
       }
     ],
+
+
+
     "models": [
       {
         "name": "Hypercube",
@@ -194,12 +202,12 @@ export default
         "source": "AUTHOR = FOTTIFOH;\n\nMODEL 5;\ndock, 20, 20, 1, 0, 20;\nbox, 0, 0, 0, 20, 20, 1;\nbox, 0, 0, 0, 19, 19, 1;\ntext, -11, -12, 0, 1.8, 2.6, 0, 0, HOME;\ntext, -14, 0, 0, 1.8, 2.6, 0, 0, SWEET;\ntext, -14, 12, 0, 1.8, 2.6, 0, 0, PIXEL;\ntext, -11.15, -12.15, 0, 1.8, 2.6, 0, 0, HOME;\ntext, -14.15, 0.15, 0, 1.8, 2.6, 0, 0, SWEET;\ntext, -14.15, 12.15, 0, 1.8, 2.6, 0, 0, PIXEL;\ntotal mass, 100;\nendpixel;"
       },
       {
-        "name": "Coat Hanger?",
+        "name": "Coat Hanger",
         "author": "Fottifoh",
         "source": "AUTHOR = FOTTIFOH;\n\nMODEL 6;\ndock, 20, 34, 1, 0, 34;\nbox, 0, 0, 0, 1, 30, 1;\nbox, 0, 32, 0, 20, 2, 2;\nbox, 0, 32, 0, 2, 2, 20;\nbox, 0, -32, 0, 20, 2, 2;\ntotal mass, 100;\nendpixel;"
       },
       {
-        "name": "Narrow Table?",
+        "name": "Narrow Table",
         "author": "Fottifoh",
         "source": "AUTHOR = FOTTIFOH;\n\nMODEL 7;\ndock, 40, 20, 5, 0, 20;\nbox, 39, -0.5, 4, 1, 17.5, 1;\nbox, -39, -0.5, 4, 1, 17.5, 1;\nbox, 39, -0.5, -4, 1, 17.5, 1;\nbox, -39, -0.5, -4, 1, 17.5, 1;\nbox, 0, -19, 0, 40, 1, 5;\nbox, -39, 18, 0, 1, 1, 10;\nbox, 39, 18, 0, 1, 1, 10;\ntotal mass, 200;\nendpixel;"
       },
@@ -229,17 +237,17 @@ export default
         "source": "AUTHOR = FOTTIFOH;\n\nMODEL 12;\ndock, 0, 0, 0, 0, 6.5;\nrectangle, 0, 0, 0, 7.5, 6, 0;\nrectangle, 0, 0, 0, 8, 6.5, 0;\nrectangle, 7, -6.25, 0, 1, 0.25, 0;\nrectangle, -7, -6.25, 0, 1, 0.25, 0;\nrectangle, 7, 6.25, 0, 1, 0.25, 0;\nrectangle, -7, 6.25, 0, 1, 0.25, 0;\nrectangle, 7.75, -5.5, 0, 0.25, 1, 0;\nrectangle, -7.75, -5.5, 0, 0.25, 1, 0;\nrectangle, 7.75, 5.5, 0, 0.25, 1, 0;\nrectangle, -7.75, 5.5, 0, 0.25, 1, 0;\nline, -8, -6, 0, -8, 6, 2;\nline, -8, 6, 2, -8, 6, 0;\nline, 8, -6, 0, 8, 6, 2;\nline, 8, 6, 2, 8, 6, 0;\nassociated file, text-v;\ntotal mass, 50;\nendpixel;"
       },
       {
-        "name": "Floor Mat? (small)",
+        "name": "Floor Mat (small)",
         "author": "Fottifoh",
         "source": "AUTHOR = FOTTIFOH;\n\nMODEL 13;\ndock, 12.5, 1, 12.5, 0, 1;\nbox, 0, 0, 0, 12.5, 1, 12.5;\ngrid, 0, 0, 0, 5, 5, 5, 1;\ntotal mass, 100;\nendpixel;"
       },
       {
-        "name": "Floor Mat? (medium)",
+        "name": "Floor Mat (medium)",
         "author": "Fottifoh",
         "source": "AUTHOR = FOTTIFOH;\n\nMODEL 14;\ndock, 25, 1, 25, 0, 1;\nbox, 0, 0, 0, 25, 1, 25;\ngrid, 0, 0, 0, 5, 5, 10, 1;\ntotal mass, 100;\nendpixel;"
       },
       {
-        "name": "Floor Mat? (large)",
+        "name": "Floor Mat (large)",
         "author": "Fottifoh",
         "source": "AUTHOR = FOTTIFOH;\n\nMODEL 15;\ndock, 50, 1, 50, 0, 1;\nbox, 0, 0, 0, 50, 1, 50;\ngrid, 0, 0, 0, 5, 5, 20, 1;\ntotal mass, 100;\nendpixel;"
       },
@@ -249,12 +257,12 @@ export default
         "source": "AUTHOR = FOTTIFOH;\n\nMODEL 16;\ndock, 0, 0, 0, 0, 6.5;\nrectangle, 0, 0, 0, 7.5, 6, 0;\nrectangle, 0, 0, 0, 8, 6.5, 0;\nrectangle, 7, -6.25, 0, 1, 0.25, 0;\nrectangle, -7, -6.25, 0, 1, 0.25, 0;\nrectangle, 7, 6.25, 0, 1, 0.25, 0;\nrectangle, -7, 6.25, 0, 1, 0.25, 0;\nrectangle, 7.75, -5.5, 0, 0.25, 1, 0;\nrectangle, -7.75, -5.5, 0, 0.25, 1, 0;\nrectangle, 7.75, 5.5, 0, 0.25, 1, 0;\nrectangle, -7.75, 5.5, 0, 0.25, 1, 0;\nline, -8, -6, 0, -8, 6, 2;\nline, -8, 6, 2, -8, 6, 0;\nline, 8, -6, 0, 8, 6, 2;\nline, 8, 6, 2, 8, 6, 0;\nassociated file, text-v;\ntotal mass, 50;\nendpixel;"
       },
       {
-        "name": "Railing? #1",
+        "name": "Railing #1",
         "author": "Fottifoh",
         "source": "AUTHOR = FOTTIFOH;\n\nMODEL 17;\ndock, 50, 20, 2, 0, 20;\nbox, 0, -18, 0, 50, 2, 2;\nbox, -45, 2, 0, 1, 18.5, 1;\nbox, -35, 2, 0, 1, 18.5, 1;\nbox, -25, 2, 0, 1, 18.5, 1;\nbox, -15, 2, 0, 1, 18.5, 1;\nbox, -5, 2, 0, 1, 18.5, 1;\nbox, 5, 2, 0, 1, 18.5, 1;\nbox, 15, 2, 0, 1, 18.5, 1;\nbox, 25, 2, 0, 1, 18.5, 1;\nbox, 35, 2, 0, 1, 18.5, 1;\nbox, 45, 2, 0, 1, 18.5, 1;\ntotal mass, 150;\nendpixel;"
       },
       {
-        "name": "Railing? #2",
+        "name": "Railing #2",
         "author": "Fottifoh",
         "source": "AUTHOR = FOTTIFOH;\n\nMODEL 18;\ndock, 2, 20, 40, 0, 20;\nbox, 0, -18, 0, 2, 2, 40;\nbox, 0, 2, -35, 1, 18.5, 1;\nbox, 0, 2, -25, 1, 18.5, 1;\nbox, 0, 2, -15, 1, 18.5, 1;\nbox, 0, 2, -5, 1, 18.5, 1;\nbox, 0, 2, 5, 1, 18.5, 1;\nbox, 0, 2, 15, 1, 18.5, 1;\nbox, 0, 2, 25, 1, 18.5, 1;\nbox, 0, 2, 35, 1, 18.5, 1;\ntotal mass, 150;\nendpixel;"
       },
@@ -279,22 +287,22 @@ export default
         "source": "AUTHOR = FOTTIFOH;\n\nMODEL 22;\ndock, 0.5, 4, 0.5, 0, 4;\ncolumn, 0, 0, 0, 0.5, 0.5, 8, 18;\ncolumn, 0, -5, 0, 0, 0.25, 1, 36;\ncolumn, 0, -6.5, 0, 0.25, 0, 2, 36;\ntotal mass, 50;\nendpixel;"
       },
       {
-        "name": "Doily? #1",
+        "name": "Doily #1",
         "author": "Fottifoh",
         "source": "AUTHOR = FOTTIFOH;\n\nMODEL 23;\ndock, 50, 0, 50, 0, 0;\nellipse, 0, 0, 0, 50, 50, 1, 90;\nrectangle, 0, 0, 0, 33.35, 33.35, 1;\ncolumn, 0, 0, 0, 62, 70, 0, 30;\ntotal mass, 500;\nendpixel;"
       },
       {
-        "name": "Broken Railing? #1",
+        "name": "Broken Railing #1",
         "author": "Fottifoh",
         "source": "AUTHOR = FOTTIFOH;\n\nMODEL 24;\ndock, 50, 20, 2, 0, 20;\nbox, -35, -18, 0, 15, 2, 2;\nbox, -45, 2, 0, 1, 18.5, 1;\nbox, -35, 2, 0, 1, 18.5, 1;\nbox, -25, 2, 0, 1, 18.5, 1;\nbox, 35, -18, 0, 15, 2, 2;\nbox, 25, 2, 0, 1, 18.5, 1;\nbox, 35, 2, 0, 1, 18.5, 1;\nbox, 45, 2, 0, 1, 18.5, 1;\ntotal mass, 150;\nendpixel;"
       },
       {
-        "name": "Broken Railing? #2",
+        "name": "Broken Railing #2",
         "author": "Fottifoh",
         "source": "AUTHOR = FOTTIFOH;\n\nMODEL 25;\ndock, 2, 20, 50, 0, 20;\nbox, 0, -18, -35, 2, 2, 15;\nbox, 0, 2, -45, 1, 18.5, 1;\nbox, 0, 2, -35, 1, 18.5, 1;\nbox, 0, 2, -25, 1, 18.5, 1;\nbox, 0, -18, 25, 2, 2, 15;\nbox, 0, 2, 15, 1, 18.5, 1;\nbox, 0, 2, 25, 1, 18.5, 1;\nbox, 0, 2, 35, 1, 18.5, 1;\ntotal mass, 150;\nendpixel;"
       },
       {
-        "name": "Doily? #2",
+        "name": "Doily #2",
         "author": "Fottifoh",
         "source": "AUTHOR = FOTTIFOH;\n\nMODEL 26;\ndock, 4.5, 0.2, 4.5, 0, 0;\nrectangle, 0, 0, 0, 4.5, 4.5, 1;\ntotal mass, 100;\nendpixel;"
       },
@@ -317,6 +325,16 @@ export default
         "name": "Blackboard (vertical) #5",
         "author": "Fottifoh",
         "source": "AUTHOR = FOTTIFOH;\n\nMODEL 30;\ndock, 0, 0, 0, 0, 6.5;\nrectangle, 0, 0, 0, 7.5, 6, 0;\nrectangle, 0, 0, 0, 8, 6.5, 0;\nrectangle, 7, -6.25, 0, 1, 0.25, 0;\nrectangle, -7, -6.25, 0, 1, 0.25, 0;\nrectangle, 7, 6.25, 0, 1, 0.25, 0;\nrectangle, -7, 6.25, 0, 1, 0.25, 0;\nrectangle, 7.75, -5.5, 0, 0.25, 1, 0;\nrectangle, -7.75, -5.5, 0, 0.25, 1, 0;\nrectangle, 7.75, 5.5, 0, 0.25, 1, 0;\nrectangle, -7.75, 5.5, 0, 0.25, 1, 0;\nline, -8, -6, 0, -8, 6, 2;\nline, -8, 6, 2, -8, 6, 0;\nline, 8, -6, 0, 8, 6, 2;\nline, 8, 6, 2, 8, 6, 0;\nassociated file, text-v;\ntotal mass, 50;\nendpixel;"
+      },
+      {
+        "name": "Star in a Box",
+        "author": "Slaimon",
+        "source": "AUTHOR = slaimon;\n\nMODEL 0;\ndock, 0,0,0, 0,0;\nrectangle, 0,0,0, 7,7,0;\nrectangle, 0,0,0, 7,7,1;\nrectangle, 0,0,0, 7,7,2;\nbox, 0,0,0, 10,10,10;\nasterisk, 0,0,0, 3.5,36;\ntotal mass, 50;\nendpixel;"
+      },
+      {
+        "name": "Saturn",
+        "author": "Slaimon",
+        "source": "AUTHOR = slaimon;\n\nMODEL 1;\ndock, 0,0,0, 0,0;\ntorus, 0,0,0, 15,2,1,10\ngridsphere, 0,0,0, 10,1,10\ntotal mass, 100;\nendpixel;"
       }
     ]
   }
