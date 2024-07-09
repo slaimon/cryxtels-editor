@@ -3,56 +3,59 @@ import * as Primitives from "./shapes/primitives.js"
 import {Text} from "./shapes/text.js"
 import {Pixel} from "./shapes/pixel.js"
 
+import keywords from "./keywords.js"
+
 const allowedVariableNameRegex = /[a-zA-Z_][0-9a-zA-Z_]*/;
-const reservedKeywords = [
-    "define",
-    "seed",
-    "author",
-    "type",
-    "model",
-    "endpixel",
-    "detail",
-    "associated file",
-    "total mass",
-    "dot",
-    "sphere",
-    "dotted ellipse",
-    "asterisk",
-    "line",
-    "rectangle",
-    "solidbox",
-    "box",
-    "grid",
-    "ellipse",
-    "spiral",
-    "wave",
-    "column",
-    "gridsphere",
-    "torus",
-    "text",
-    "dock",
-    "collision",
-    "collisionhigh",
-    "forbidden",
-    "endpixel"
-]
+const reservedKeywords = keywords.reduce((allNames, keyword) => allNames.concat(keyword.names), []);
 
 var line_number;
 var environment;
 
+function evalExpression(string) {
+    let result = Number(string);
+
+    if (!isNaN(result))
+        return result;
+
+    try {
+        result = math.evaluate(string);
+    } catch(e) {
+        throw new Error(`Math Error: cannot evaluate expression "${string}" (line ${line_number}):\n${e.message}`);
+    }
+
+    return result;
+}
+
+function isNumericArg(keyword, index) {
+    // exclude the keyword itself right away
+    if (index === 0)
+        return false;
+
+    let keywordProperties = keywords.find(x => x.names.includes(keyword));
+
+    if (keywordProperties.numericArgs &&
+        keywordProperties.numericArgs.includes(index))
+        return true;
+    else 
+        return false;
+}
+
 // commands can have an extra parameter at the end, as a treat ehrm I mean, as a comment
 // for instance (from PIXELS.DEF): "asterisk, 75, -100, -100, 3, 36, gratuitus use of meaningless decoration;"
-function checkParams(params, minArity, maxArity=minArity+1) {
-    if (params.length-1 < minArity) {
-        throw new Error(`Syntax error: not enough parameters given (line ${line_number})\ncommand "${params[0]}" requires at least ${minArity}, have ${params.length-1}`);
+function checkParams(command) {
+    let keyword = command[0].toLowerCase();
+    let keywordProperties = keywords.find(x => x.names.includes(keyword));
+
+    let minArity = keywordProperties.arity;
+    let maxArity = (keywordProperties.noComment) ?
+        (minArity) :
+        (minArity+1);
+
+    if (command.length-1 < minArity) {
+        throw new Error(`Syntax error: not enough parameters given (line ${line_number})\ncommand "${params[0]}" requires at least ${minArity}, have ${command.length-1}`);
     }
-    if (params.length-1 > maxArity) {
-        throw new Error(`Syntax error: too many parameters given (line ${line_number})\ncommand "${params[0]}" requires at most ${maxArity}, have ${params.length-1}`);
-    }
-    for (let i=0; i<params.length; i++) {
-        if (params[i] === undefined) {
-            throw new Error(`Syntax error: invalid parameter (line ${line_number})`);
-        }
+    if (command.length-1 > maxArity) {
+        throw new Error(`Syntax error: too many parameters given (line ${line_number})\ncommand "${params[0]}" requires at most ${maxArity}, have ${command.length-1}`);
     }
 }
 
@@ -81,7 +84,10 @@ function getOrientation(i) {
 }
 
 function applyCommand(pixel, command) {
-    switch(command[0].toLowerCase()) {
+    checkParams(command);
+
+    let keyword = command[0].toLowerCase();
+    switch(keyword) {
 
         // unimplemented commands
         case "detail":
@@ -96,7 +102,6 @@ function applyCommand(pixel, command) {
         }
 
         case "dock": {
-            checkParams(command, 5);
             let c = [command[1], command[2], command[3]];
 
             pixel.setDockPosition(c);
@@ -105,14 +110,12 @@ function applyCommand(pixel, command) {
 
         // dot primitives
         case "dot": {
-            checkParams(command, 3);
             let c = [command[1], command[2], command[3]];
             
             pixel.Add(new Primitives.Dot(c));
             break;
         }
         case "sphere": {
-            checkParams(command, 6);
             let c = [command[1], command[2], command[3]];
             let radius = command[4];
             let ratio = command[5];
@@ -122,7 +125,6 @@ function applyCommand(pixel, command) {
             break;
         }
         case "dotted ellipse": {
-            checkParams(command, 7);
             let c = [command[1], command[2], command[3]];
             let width = command[4];
             let height = command[5];
@@ -135,7 +137,6 @@ function applyCommand(pixel, command) {
 
         // pixel primitives
         case "asterisk": {
-            checkParams(command, 5);
             let c = [command[1], command[2], command[3]];
             let radius = command[4];
             let step = command[5];
@@ -144,7 +145,6 @@ function applyCommand(pixel, command) {
             break;
         }
         case "line": {
-            checkParams(command, 6);
             let start = [command[1], command[2], command[3]];
             let end = [command[4], command[5], command[6]];
 
@@ -152,7 +152,6 @@ function applyCommand(pixel, command) {
             break;
         }
         case "rectangle": {
-            checkParams(command, 6);
             let c = [command[1], command[2], command[3]];
             let width = command[4];
             let height = command[5];
@@ -163,7 +162,6 @@ function applyCommand(pixel, command) {
         }
         case "solidbox":
         case "box": {
-            checkParams(command, 6);
             let c = [command[1], command[2], command[3]];
             let hx = command[4];
             let hy = command[5];
@@ -173,7 +171,6 @@ function applyCommand(pixel, command) {
             break;
         }
         case "grid": {
-            checkParams(command, 7);
             let c = [command[1], command[2], command[3]];
             let width = command[4];
             let height = command[5];
@@ -184,7 +181,6 @@ function applyCommand(pixel, command) {
             break;
         }
         case "ellipse": {
-            checkParams(command, 7);
             let c = [command[1], command[2], command[3]];
             let width = command[4];
             let height = command[5];
@@ -195,7 +191,6 @@ function applyCommand(pixel, command) {
             break;
         }
         case "spiral": {
-            checkParams(command, 6);
             let c = [command[1], command[2], command[3]];
             let increment = command[4];
             let plane = getOrientation(command[5]);
@@ -205,7 +200,6 @@ function applyCommand(pixel, command) {
             break;
         }
         case "wave": {
-            checkParams(command, 7);
             let c = [command[1], command[2], command[3]];
             let scale = command[4];
             let amplitude = command[5];
@@ -216,7 +210,6 @@ function applyCommand(pixel, command) {
             break;
         }
         case "column": {
-            checkParams(command, 7);
             let c = [command[1], command[2], command[3]];
             let base_radius = command[4];
             let top_radius = command[5];
@@ -227,7 +220,6 @@ function applyCommand(pixel, command) {
             break;
         }
         case "gridsphere": {
-            checkParams(command, 6);
             let c = [command[1], command[2], command[3]];
             let radius = command[4];
             let ratio = command[5];
@@ -238,7 +230,6 @@ function applyCommand(pixel, command) {
         }
         case "donut":
         case "torus": {
-            checkParams(command, 7);
             let c = [command[1], command[2], command[3]];
             let radius = command[4];
             let section = command[5];
@@ -249,7 +240,6 @@ function applyCommand(pixel, command) {
             break;
         }
         case "text": {
-            checkParams(command, 8, 8);
             let c = [command[1], command[2], command[3]];
             let scale_x = command[4];
             let scale_y = command[5];
@@ -319,24 +309,36 @@ function parseHeader(code, pixel) {
             continue;
         }
         let command = line
-            .replace(/[\s;]/g, "")
-            .split("=");
+            .replace(";", "")
+            .split(" ")
+            .filter(s=>s.length>0);
         
-        switch(command[0].toLowerCase()) {
+        let keyword = command[0].toLowerCase();
+        switch(keyword) {
             case "author": {
+                if (command[1] !== "=") {
+                    throw new Error(`Syntax error: expected "=" after keyword "author" (line ${code.line_number})`);
+                }
                 if (authorSet) {
                     throw new Error(`Syntax error: redeclaration of author (line ${code.line_number})`)
                 }
                 authorSet = true;
-                applyCommand(pixel,command);
+                applyCommand(pixel,["author", command[2]]);
                 continue;
             }
             case "seed": {
+                if (command[1] !== "=") {
+                    throw new Error(`Syntax error: expected "=" after keyword "seed" (line ${code.line_number})`);
+                }
                 if (seedSet) {
                     throw new Error(`Syntax error: redeclaration of seed (line ${code.line_number})`)
                 }
                 seedSet = true;
-                applyCommand(pixel,command);
+                let arg = evalExpression(command[2]);
+                if (isNaN(arg)) {
+                    throw new Error(`Syntax error: keyword "${keyword}" expects a number as argument (line ${code.line_number})`);
+                }
+                applyCommand(pixel,["seed", arg]);
                 continue;
             }
             case "define": {
@@ -345,21 +347,20 @@ function parseHeader(code, pixel) {
                     continue;
                 }
             }
+            case "type":
+            case "model": {
+                let arg = evalExpression(command[1]);
+                if (isNaN(arg)) {
+                    throw new Error(`Syntax error: keyword "${keyword}" expects a number as argument (line ${code.line_number})`);
+                }
+                (keyword==="model") ?
+                    pixel.setModel(arg) :
+                    pixel.setType(arg);
+                
+                return pixel;
+            }
             default: {
-                let found;
-                if (found = command[0].match(/type(?<typeNumber>[0-9]+)/i)) {
-                    pixel.setType(Number(found.typeNumber));
-                    return pixel;
-                }
-                else if (found = command[0].match(/model(?<typeNumber>[0-9]+)/i)) {
-                    pixel.setModel(Number(found.typeNumber));
-                    return pixel;
-                }
-                else {
-                    // throw new error if we're being pedantic ("missing endpixel declaration")
-                    code.rewind(1);
-                    return pixel;
-                }
+                throw new Error(`Syntax error: missing "type" or "model" declaration (line ${code.line_number})`);
             }
         }
     }
@@ -382,36 +383,43 @@ function parseBody(code, pixel) {
             .split(",")
             .map(s => {
                     if (s[0]===" ") {
-                        s = s.slice(1);             // remove leading whitespace
+                        s = s.slice(1);     // remove leading whitespace
                     }
                     return s;
                 });
         
+        let keyword = command[0].toLowerCase();
+        
         // the following commands should only appear in the Header
-        switch(command[0].toLowerCase()) {
+        switch(keyword) {
             case "seed":
             case "author":
+            case "define":
             case "type":
             case "model": {
                 throw new Error(`Syntax error: declaration of ${command[0]} inside definition body (line ${line_number})`);
             }
         }
 
+        if (!reservedKeywords.includes(keyword)){
+            throw new Error(`Syntax error: unrecognized keyword "${keyword}" (line ${line_number})`);
+        }
+
         // allow commas in the last argument of "text" command
         let skipConversion = false
-        if (command[0].toLowerCase() === "text" && command.length > 8) {
+        if (keyword === "text" && command.length > 8) {
             skipConversion = true;
             for (let i=9; i<command.length; i++) {
                 command[8] += ","+command[i];
             }
             command = command.slice(0,9);
         }
-        // convert digit strings into numbers, spare the text field
+
+        // convert digit strings into numbers
         command = command.map((s, i) => {
-            if (skipConversion && i>8)
+            if (!isNumericArg(keyword, i))
                 return s;
-            let x = Number(s);
-            return (isNaN(x)) ? (s) : (x);
+            return evalExpression(s);
         });
 
         console.log(command);
