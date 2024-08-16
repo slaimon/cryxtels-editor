@@ -44,7 +44,7 @@ export default [
         },
         {
             "names":["total mass"],
-            "arity":1,
+            "arity": 1,
             "args": ["mass"],
             "isScalable":false,
             "numericArgs":[1],
@@ -252,5 +252,17 @@ export default [
             "scalableArgs":[1,2,3,4,5,6],
             "numericArgs":[1,2,3,4,5,6],
             "separator":","
+        },
+        {
+            "names":[null,"name"],
+            "arity": 1,
+            "args":["name"],
+            "separator":"="
+        },
+        {
+            "names":[null,"define"],
+            "arity": 2,
+            "args":["name", "value"],
+            "separator":" "
         }
     ]

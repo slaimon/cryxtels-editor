@@ -54,10 +54,10 @@
             </div>
             <div class="editor_footer">
                 <div class="editor_footer-left">
-                    <button id="editor_btn" class="editor_btn editor_run">Run</button>
+                    <button id="editor_btn" class="editor_btn editor_run">Draw</button>
                 </div>
                 <div class="editor_footer-right">
-                    <div class="editor_console">
+                    <div class="editor_console" style="display: none">
                         <ul class="editor_console-logs"></ul>
                     </div>
                 </div>
@@ -67,7 +67,7 @@
     </div>
     <div id="meshSelectionPopup" class="popup_container">
         <div class="popup_window popup">
-            <h2 class="noselect">Select a mesh...</h2>
+            <h2 class="noselect">Select an object...</h2>
             <hr>
             <div id="selectorListContainer" class="selector_options">
             </div>
@@ -91,23 +91,50 @@
 
     const viewport = document.getElementById("viewport");
     const viewer = initializeViewer(viewport);
+
     const textarea = document.getElementById("textarea");
     const editor_btn = document.getElementById("editor_btn");
     const download_btn = document.getElementById("download_btn");
     const copy_btn = document.getElementById("copy_btn");
 
+    var currentModel = undefined;
     function runDefinition() {
         let environment = {
-            "%d": Math.floor(Math.random() * 500)
+            "%d": Math.floor(Math.random() * 500),
+            "xy":0,
+            "xz":1,
+            "yz":2
         }
         let pixel = parse(textarea.value, environment);
         pixel.addShip();
+        currentModel = pixel;
+
+        // this conversion to obj shouldn't be needed once the new viewer is implemented
         let objstring = pixel.toObjString();
         console.log(objstring);
         const objFile = new File([objstring], `${pixel.name}.obj`);
         viewer.LoadModelFromFileList([objFile]);
     }
 
+    function downloadBlob(filename, blob) {
+        var element = document.createElement('a');
+        element.setAttribute('href', URL.createObjectURL(blob));
+        element.setAttribute('download', filename);
+    
+        element.style.display = 'none';
+        document.body.appendChild(element);
+    
+        element.click();
+    
+        document.body.removeChild(element);
+    }
+
+    function downloadOBJ() {
+        const blob = new Blob([currentModel.toObjString()], {type:'text/plain'});
+        downloadBlob(`${currentModel.name}.obj`, blob);
+    }
+
     editor_btn.addEventListener("click", runDefinition);
+    download_btn.addEventListener("click", downloadOBJ);
 </script>
 </html>

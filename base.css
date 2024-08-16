@@ -123,7 +123,6 @@ div.editor_menubar {
     letter-spacing: 1px;
     border: none;
     margin-top: 1em;
-    width: 100px;
 }
 .editor_btn:hover {
     background-color: var(--button-active);

@@ -32,12 +32,25 @@ function isNumericArg(keyword, index) {
         return false;
 
     let keywordProperties = keywords.find(x => x.names.includes(keyword));
+    if (!keywordProperties) {
+        throw new Error(`Syntax error: unrecognized keyword "${keyword}" (line ${line_number})`);
+    }
 
     if (keywordProperties.numericArgs &&
         keywordProperties.numericArgs.includes(index))
         return true;
     else 
         return false;
+}
+
+function convertNumericStrings(command) {
+    let keyword = command[0].toLowerCase();
+
+    return command.map((s, i) => {
+        if (!isNumericArg(keyword, i))
+            return s;
+        return evalExpression(s);
+    });
 }
 
 // commands can have an extra parameter at the end, as a treat ehrm I mean, as a comment
@@ -84,6 +97,7 @@ function getOrientation(i) {
 }
 
 function applyCommand(pixel, command) {
+    console.log(command);
     checkParams(command);
 
     let keyword = command[0].toLowerCase();
@@ -136,6 +150,7 @@ function applyCommand(pixel, command) {
         }
 
         // pixel primitives
+        case "star":
         case "asterisk": {
             let c = [command[1], command[2], command[3]];
             let radius = command[4];
@@ -251,6 +266,14 @@ function applyCommand(pixel, command) {
             break;
         }
 
+        // purely non-standard keywords:
+        case "name": {
+            let c = command[1];
+
+            pixel.setName(c);
+            break;
+        }
+
         // collision primitives, could be interesting to extend this in the future
         // should add solidbox to these because it creates a collision block AND a pixel
         // case "dock":
@@ -263,6 +286,8 @@ function applyCommand(pixel, command) {
         case "endpixel": {
             return -1;
         }
+
+
         default: {
             throw new Error(`unrecognized command: ${command[0]} (line ${line_number})`);
         }
@@ -300,6 +325,7 @@ class CodeIterator {
 
 // the Header is the part where commands like "SEED", "AUTHOR" and "TYPE" or "MODEL" are found
 function parseHeader(code, pixel) {
+    let nameSet = false;
     let seedSet = false;
     let authorSet = false;
 
@@ -314,16 +340,33 @@ function parseHeader(code, pixel) {
             .filter(s=>s.length>0);
         
         let keyword = command[0].toLowerCase();
+        command = convertNumericStrings(command);
+
         switch(keyword) {
+            case "name": {
+                if (command[1] !== "=") {
+                    throw new Error(`Syntax error: expected "=" after keyword "name" (line ${code.line_number})`);
+                }
+                if (nameSet) {
+                    throw new Error(`Syntax error: redeclaration of author (line ${code.line_number})`);
+                }
+                nameSet = true;
+
+                // the argument of "name" should allow whitespace, so we insert it back in
+                command = ["name", command.slice(2).join(' ')];
+                applyCommand(pixel, command);
+                continue;
+            }
             case "author": {
                 if (command[1] !== "=") {
                     throw new Error(`Syntax error: expected "=" after keyword "author" (line ${code.line_number})`);
                 }
                 if (authorSet) {
-                    throw new Error(`Syntax error: redeclaration of author (line ${code.line_number})`)
+                    throw new Error(`Syntax error: redeclaration of author (line ${code.line_number})`);
                 }
                 authorSet = true;
-                applyCommand(pixel,["author", command[2]]);
+                command = ["author", command[2]];
+                applyCommand(pixel,command);
                 continue;
             }
             case "seed": {
@@ -331,21 +374,22 @@ function parseHeader(code, pixel) {
                     throw new Error(`Syntax error: expected "=" after keyword "seed" (line ${code.line_number})`);
                 }
                 if (seedSet) {
-                    throw new Error(`Syntax error: redeclaration of seed (line ${code.line_number})`)
+                    throw new Error(`Syntax error: redeclaration of seed (line ${code.line_number})`);
                 }
                 seedSet = true;
                 let arg = evalExpression(command[2]);
                 if (isNaN(arg)) {
                     throw new Error(`Syntax error: keyword "${keyword}" expects a number as argument (line ${code.line_number})`);
                 }
-                applyCommand(pixel,["seed", arg]);
+                command = ["seed", arg];
+                applyCommand(pixel,command);
                 continue;
             }
             case "define": {
                 if (checkIfAllowedVariableName(command[1])) {
                     environment[command[1]] = command[2];
-                    continue;
                 }
+                break;
             }
             case "type":
             case "model": {
@@ -375,7 +419,7 @@ function parseBody(code, pixel) {
 
         // perform macro expansion
         for (let variable in environment) {
-            line = line.replace(variable, environment[variable]);
+            line = line.replaceAll(variable, environment[variable]);
         }
 
         let command = line
@@ -406,21 +450,14 @@ function parseBody(code, pixel) {
         }
 
         // allow commas in the last argument of "text" command
-        let skipConversion = false
         if (keyword === "text" && command.length > 8) {
-            skipConversion = true;
             for (let i=9; i<command.length; i++) {
                 command[8] += ","+command[i];
             }
             command = command.slice(0,9);
         }
 
-        // convert digit strings into numbers
-        command = command.map((s, i) => {
-            if (!isNumericArg(keyword, i))
-                return s;
-            return evalExpression(s);
-        });
+        command = convertNumericStrings(command);
 
         console.log(command);
         if (applyCommand(pixel, command)) {
@@ -430,7 +467,7 @@ function parseBody(code, pixel) {
     throw new Error(`Syntax error: missing endpixel declaration (line ${line_number})`);
 }
 
-function parse(txt, env={}) {
+function parse(txt, env=defaultEnvironment) {
     environment = env;
     let pixel = new Pixel();
     let code = new CodeIterator(txt);

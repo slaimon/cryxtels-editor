@@ -60,8 +60,22 @@ class Pixel extends Shape {
     // generate the .obj file for the mesh
     toObjString () {
         let obj = `# generated with ${sw_version}\n`;
+
         if (this.author !== undefined) {
             obj += `# this pixel was created by ${this.author}\n`;
+        }
+        if (this.supportsLanding) {
+            obj += `# type number ${this.type}`;
+        }
+        else {
+            obj += `# model number ${this.model}`;
+        }
+
+        if (this.name !== "Pixel") {
+            obj += ` aka ${this.name}\n`;
+        }
+        else {
+            obj += `\n`;
         }
         obj += `# ${new Date().toISOString()}\n`
         obj += `o ${this.name}\n`;
