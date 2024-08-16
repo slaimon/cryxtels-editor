@@ -5,7 +5,7 @@ import * as THREE from "three";
 
 export {Pixel}
 
-const sw_version = "Cryxtels Online Editor v0.5";
+const sw_version = "Cryxtels Editor v0.5";
 
 class Pixel extends Shape {
     constructor(name="Pixel") {
@@ -60,6 +60,7 @@ class Pixel extends Shape {
     // generate the .obj file for the mesh
     toObjString () {
         let obj = `# generated with ${sw_version}\n`;
+        obj +=    `# https://github.com/slaimon/cryxtels-editor`;
 
         if (this.author !== undefined) {
             obj += `# this pixel was created by ${this.author}\n`;
