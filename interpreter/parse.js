@@ -1,7 +1,7 @@
 export {parse}
-import * as Primitives from "./shapes/primitives.js"
-import {Text} from "./shapes/text.js"
-import {Pixel} from "./shapes/pixel.js"
+import * as Primitives from "../shapes/primitives.js"
+import {Text} from "../shapes/text.js"
+import {Pixel} from "../shapes/pixel.js"
 
 import keywords from "./keywords.js"
 

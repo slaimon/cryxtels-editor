@@ -1,6 +1,6 @@
 export { Popup, DropdownMenu, SelectorWindow, windowClickHandler }
 
-import examples from "./examples.js";
+import examples from "../examples.js";
 
 const textArea = document.getElementById("textarea");
 

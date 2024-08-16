@@ -75,13 +75,13 @@
         </div>
     </div>
 </body>
-<script src="./math.js"></script>
+<script src="./interpreter/math.js"></script>
 <script type="module">
-    import { parse } from "./parse.js"
+    import { parse } from "./interpreter/parse.js"
     import { Pixel } from "./shapes/pixel.js"
     import { createThreeLineMesh } from "./converter.js"
-    import { initializeViewer } from "./viewer.js"
-    import { Popup, DropdownMenu, SelectorWindow, windowClickHandler } from "./ui.js"
+    import { initializeViewer } from "./ui/viewer.js"
+    import { Popup, DropdownMenu, SelectorWindow, windowClickHandler } from "./ui/ui.js"
 
     window.addEventListener("click", event => windowClickHandler(event));
     new DropdownMenu("load_dropdown", "load_btn");
