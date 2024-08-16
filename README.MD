@@ -1,5 +1,7 @@
 # Crystal Pixels Online Editor
 
+![Screenshot of the tool interface](./icons/front.jpg)
+
 This is an online viewer and editor for Crystal Pixels definitions. It supports loading the game assets, creating your own and also exporting the shapes you create into Wavefront OBJ files to download.
 
 You can play with it on the [project page](https://slaimon.github.io/cryxtels-editor).
