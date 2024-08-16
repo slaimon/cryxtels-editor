@@ -18,15 +18,15 @@ I still haven't found the time to write a proper documentation, unfortunately. T
 
 The Pixels will have a spaceship on them by default, for scale; to hide it, delete the line that starts with "`dock`" (this is a workaround and I aim to add a cleaner solution soon).
 
-### Language extensions
+### Language Extensions
 
-I made a couple extensions to the original language in order to make it easier to write definitions. To see these language extensions in action you can go into Load -> Model, then scroll to the bottom and click on "Table (using Language Extensions)".
+I made a couple extensions to the original language in order to make it easier to write definitions. To see these language extensions in action you can go into **Load** -> **Model**, then scroll to the bottom and click on **Table (using Language Extensions)**.
 
 * The `NAME` keyword specifies a name for your model; the original game only allows you to assign them a number.
 
-* The `define` keyword works like the `#define` preprocessor directive in C: it takes a word and a value, and replaces all instances of the given word in the code with the given value. For example, this code creates a line 300 units long (1 metre) in the X direction:
+* The `define` keyword works like the `#define` preprocessor directive in C: it takes a word and a value, and replaces all instances of the given word in the code with the given value. For example, this code creates a line 100 units long (3 metres) in the X direction:
     ```
-    define length 300;
+    define length 100;
 
     MODEL 0;
     line, 0,0,0, length,0,0;
@@ -51,14 +51,14 @@ I made a couple extensions to the original language in order to make it easier t
     | `sphere`         | `dotsphere`  |
     | `dotted ellipse` | `dotellipse` |
     
-    In each row the keyword on the left is accepted by the original game, while the one on the right is only accepted by my tool and will be rejected if encountered in the game configuration files. In the future, conversion to legacy syntax will be performed automatically when you click on Save -> Compile and copy.
+    In each row the keyword on the left is accepted by the original game, while the one on the right is only accepted by my tool and will be rejected if encountered in the game configuration files. In the future, conversion to legacy syntax will be performed automatically when you click on **Save** -> **Compile and copy**.
 
 * Integration with `math.js` allows commands to accept arithmetic expressions in place of numeric literals. See the above mentioned "Table" example to see this in practice.
 
 ## Known issues and Backlog
 
 There are a lot of problems big and small that I'd like to fix if I had the time:
-* An obvious issue with the tool is it doesn't display dot primitives, like `grid sphere`. This is an intrinsic limitation of using o3dv.
+* An obvious issue with the tool is it doesn't display dot primitives, like `sphere`. This is an intrinsic limitation of using o3dv.
 * Error messages are output to the browser console where they aren't visible if you don't have developer tools open.
 * "Reset Camera" button doesn't do anything, it's just a placeholder.
 * The camera is reset every time you reload the object by pressing "Draw".
@@ -69,7 +69,11 @@ There are a lot of problems big and small that I'd like to fix if I had the time
 
 Furthermore, the interface is still crude. There are two major changes I'd like to apply:
 * A new object viewer, reimplemented in THREE.js, to display not only dot primitives but also collision boxes and a skybox.
-* Integration with a web editor like CodeMirror to display hints, line numbers, syntax highlighting and errors. My target would be to create a user experience similar to the [shader editor](https://editor.thebookofshaders.com/) by Patricio Gonzalez Vivo. 
+* Integration with a web editor like CodeMirror to display hints, line numbers, syntax highlighting and errors. My target would be to create a user experience similar to the [shader editor](https://editor.thebookofshaders.com/) by Patricio Gonzalez Vivo.
+
+Other features that I'd like to add in the future:
+* The original language has support for level-of-detail control. It would be cool to emulate this in the viewer.
+* Some game assets aren't written in the Pixel definition language, but rather are stored in the source code as arrays of floats. My tool already has support for interpreting this kind of data (it's implemented by a subclass of Shape called Link in `primitives.js`), but the language still lacks an extension to access this feature.
 
 ## Aknowledgements
 
