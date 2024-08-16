@@ -5,7 +5,7 @@ import * as THREE from "three";
 
 export {Pixel}
 
-const sw_version = "cryxtels2obj v0.4";
+const sw_version = "Cryxtels Online Editor v0.5";
 
 class Pixel extends Shape {
     constructor(name="Pixel") {

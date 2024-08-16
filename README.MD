@@ -6,7 +6,7 @@ You can play with it on the [project page](https://slaimon.github.io/cryxtels-ed
 
 ## What is Crystal Pixels?
 
-Crystal Pixels, or Cryxtels for short, is a game created by Alessandro Ghignola around 1994. You can check out a modern port [here](https://github.com/Enet4/cryxtels).
+Crystal Pixels, or Cryxtels for short, is a 3D flight simulation game for MS-DOS developed by Alessandro Ghignola in 1994. You can check out a modern port [here](https://github.com/Enet4/cryxtels).
 
 The game takes place in a vast empty space in which little islands, called _Pixels_, float around and are decorated by random objects, called _Models_. You can define your own Pixels and Models using a simple language in the game configuration files.
 
@@ -14,15 +14,15 @@ The game takes place in a vast empty space in which little islands, called _Pixe
 
 I still haven't found the time to write a proper documentation, unfortunately. The original documentation for the language can be found in the above cryxtels repo, in the file `pixels definition.txt`. You can understand the jist of it by taking a look at the examples provided in the **Load** menu.
 
-The Pixels will have a spaceship on them by default, for scale; to disable this, change the "TYPE" command into a "MODEL" command (this is a workaround and I aim to add a cleaner solution soon).
+The Pixels will have a spaceship on them by default, for scale; to hide it, delete the line that starts with "`dock`" (this is a workaround and I aim to add a cleaner solution soon).
 
 ### Language extensions
 
 I made a couple extensions to the original language in order to make it easier to write definitions. To see these language extensions in action you can go into Load -> Model, then scroll to the bottom and click on "Table (using Language Extensions)".
 
-* The `NAME` keyword specifies a name for your model; the original only allowed to assign them a number.
+* The `NAME` keyword specifies a name for your model; the original game only allows you to assign them a number.
 
-* The `define` keyword works like the `#define` preprocessor directive in C: it takes a keyword and a value, and replaces all instances of the specified keyword in the code with the given value. For example, this code creates a line 300 units (1 metre) long in the X direction:
+* The `define` keyword works like the `#define` preprocessor directive in C: it takes a word and a value, and replaces all instances of the given word in the code with the given value. For example, this code creates a line 300 units long (1 metre) in the X direction:
     ```
     define length 300;
 
@@ -31,7 +31,7 @@ I made a couple extensions to the original language in order to make it easier t
     endpixel;
     ```
 
-    All code has an implicit command at the top: `define %d N`, where `N` is a number chosen randomly everytime you run the code. This is to emulate the way the game displays a different number on each pixel wherever a text primitive contains the string `%d`.
+    All code has an implicit command at the top: `define %d N`, where `N` is a number chosen randomly everytime you run the code. This is to emulate the way the game displays a different number on each Pixel wherever a text primitive contains the string `%d`.
 
     Moreover, the following implicit substitutions take place:
     ```
@@ -39,16 +39,17 @@ I made a couple extensions to the original language in order to make it easier t
     define xz 1;
     define yz 2;
     ```
-    This way, you can specify the plane of orientation of a primitive using letters instead of numbers.
+    This way you can specify the plane of orientation of a primitive using letters, instead of numbers.
 
 * Some keywords have aliases that I remember better. For example `torus` is an alias for `donut`. All aliased keywords are listed here:
-    ```
-    donut, torus
-    asterisk, star
-    dotted ellipse, dotellipse
-    sphere, dotsphere
-    ```
-    Only the first keyword is accepted by the original game, while the second will be rejected if encountered. In the future, conversion to legacy syntax will be performed automatically when you click on Save -> Compile and copy.
+    | official         | alias        |
+    |------------------|--------------|
+    | `donut`          | `torus`      |
+    | `asterisk`       | `star`       |
+    | `sphere`         | `dotsphere`  |
+    | `dotted ellipse` | `dotellipse` |
+    
+    In each row the keyword on the left is accepted by the original game, while the one on the right is only accepted by my tool and will be rejected if encountered in the game configuration files. In the future, conversion to legacy syntax will be performed automatically when you click on Save -> Compile and copy.
 
 * Integration with `math.js` allows commands to accept arithmetic expressions in place of numeric literals. See the above mentioned "Table" example to see this in practice.
 
@@ -62,6 +63,7 @@ There are a lot of problems big and small that I'd like to fix if I had the time
 * Pressing a button every time you edit the code shouldn't even be required, it should refresh automatically.
 * When you download an OBJ file, the spaceship is saved as well. I want to add a setting to disable this.
 * The Y axis is reversed in the game; that is, all pixels are built with features above the ground having a negative Y position value. I'd like to add an option to write your code with an upwards-pointing Y axis and _then_ have all values reversed during "compilation".
+* This has been a long time coming, I should definitely turn the parser into a class to make the code more readable and extensible.
 
 Furthermore, the interface is still crude. There are two major changes I'd like to apply:
 * A new object viewer, reimplemented in THREE.js, to display not only dot primitives but also collision boxes and a skybox.

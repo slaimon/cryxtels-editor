@@ -337,6 +337,11 @@ export default
         "source": "AUTHOR = slaimon;\n\nMODEL 1;\ndock, 0,0,0, 0,0;\ntorus, 0,0,0, 15,2,1,10\ngridsphere, 0,0,0, 10,1,10\ntotal mass, 100;\nendpixel;"
       },
       {
+        "name": "Cartesian Axes",
+        "author": "Slaimon",
+        "source": "AUTHOR = slaimon;\n\nMODEL 0;\ndock, 0,0,0, 0,0;\nline, 0,0,0, 20,0,0, X;\ntext, 16,-4,0, 1,1,0,0, X;\nline, 0,0,0, 0,-20,0, Y;\ntext, 0,-16,4, 1,1,0,270, Y;\nline, 0,0,0, 0,0,20, Z;\ntext, 0,-4,16, 1,1,0,270, Z;\ntotal mass, 10;\nendpixel;"
+      },
+      {
         "name": "Table (using Language Extensions)",
         "author": "Slaimon",
         "source": "AUTHOR = slaimon;\n\ndefine height 500;\ndefine width 500;\ndefine radius 600;\ndefine thick 20;\n\nMODEL 0;\ndock, 0,0,0, 0,0;\ncolumn, 0,-height/2,width, thick,thick,height,90, LEGS;\ncolumn, 0,-height/2,-width, thick,thick,height,90;\ncolumn, width,-height/2,0, thick,thick,height,90;\ncolumn, -width,-height/2,0, thick,thick,height,90;\n\ncolumn, 0,-height-thick,0, radius,radius,2*thick,10, TOP;\nendpixel;"
