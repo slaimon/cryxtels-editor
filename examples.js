@@ -345,6 +345,11 @@ export default
         "name": "Table (using Language Extensions)",
         "author": "Slaimon",
         "source": "AUTHOR = slaimon;\n\ndefine height 500;\ndefine width 500;\ndefine radius 600;\ndefine thick 20;\n\nMODEL 0;\ndock, 0,0,0, 0,0;\ncolumn, 0,-height/2,width, thick,thick,height,90, LEGS;\ncolumn, 0,-height/2,-width, thick,thick,height,90;\ncolumn, width,-height/2,0, thick,thick,height,90;\ncolumn, -width,-height/2,0, thick,thick,height,90;\n\ncolumn, 0,-height-thick,0, radius,radius,2*thick,10, TOP;\nendpixel;"
+      },
+      {
+        "name": "Maximum Polyhedron (Donald W. Grace, 1962)",
+        "author": "Slaimon",
+        "source": "AUTHOR = slaimon;\n\ndefine A      0, -5.69,  8.22\ndefine B      0,  5.69,  8.22\ndefine C   9.70,     0,  2.43\ndefine D  -9.70,     0,  2.43\ndefine E      0,  9.70, -2.43\ndefine F      0, -9.70, -2.43\ndefine G  -5.69,     0, -8.22\ndefine H   5.69,     0, -8.22\n\nMODEL 0;\ndock, 0,0,0, 0,0;\nline, A, B;\nline, A, C;\nline, A, D;\nline, B, C;\nline, B, D;\nline, A, F;\nline, B, E;\nline, E, C;\nline, F, C;\nline, E, D;\nline, F, D;\nline, C, H;\nline, E, H;\nline, F, H;\nline, D, G;\nline, E, G;\nline, F, G;\nline, G, H;\nendpixel;"
       }
     ]
   }

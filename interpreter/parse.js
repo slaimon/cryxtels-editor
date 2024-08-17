@@ -387,7 +387,7 @@ function parseHeader(code, pixel) {
             }
             case "define": {
                 if (checkIfAllowedVariableName(command[1])) {
-                    environment[command[1]] = command[2];
+                    environment[command[1]] = command.slice(2).join(' ');
                 }
                 break;
             }
