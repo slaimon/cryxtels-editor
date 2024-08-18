@@ -60,7 +60,20 @@ div.editor_menubar {
 
     display: flex;
     flex-direction: row;
-    justify-content: flex-end;
+    justify-content: space-between;
+    gap: 1em;
+
+    padding: 0px 1px;
+    margin: 5px 1px;
+}
+
+div.editor_menu_segment {
+    width:min-content;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
     gap: 1em;
 
     padding: 0px 1px;
@@ -198,6 +211,14 @@ div.editor_menubar {
 }
 .dropdown_option:hover {
     background-color: var(--dropdown-element-active);
+}
+
+.editor_menu_icon {
+    height: 22px;
+    width: 22px;
+    display: flex;
+    justify-content: center;
+    filter: brightness(0) saturate(100%) invert(75%) sepia(51%) saturate(347%) hue-rotate(172deg) brightness(101%) contrast(99%);
 }
 
 .dropdown_icon {

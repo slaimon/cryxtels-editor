@@ -19,32 +19,40 @@
     <div id="main" class="main">
         <div class="editor_wrapper">
             <div class="editor_menubar">
-                <div class="editor_menu dropdown_menu">
-                    <button id="load_btn" class="editor_menubtn dropdown_btn">
-                        Load
-                        <img src="./icons/arrowhead.svg" title="enter the load menu" class="dropdown_icon"></img>
-                    </button>
-                    <div id="load_dropdown" class="popup dropdown_content">
-                        <ul class="nobullet">
-                            <li id="pixelLoader" class="dropdown_option noselect">Pixel...</li>
-                            <li id="modelLoader" class="dropdown_option noselect">Model...</li>
-                        </ul>
-                    </div>
+                <div id=right_menu class="editor_menu_segment">
+                    <img class=editor_menu_icon src="./icons/info.svg" alt="Get help">
+                    <a class=editor_menu_icon href="https://github.com/slaimon/cryxtels-editor">
+                        <img src="./icons/github.svg" alt="View the repository on github">
+                    </a>
                 </div>
-                <div class="editor_menu dropdown_menu">
-                    <button id="save_btn" class="editor_menubtn dropdown_btn">
-                        Save
-                        <img src="./icons/arrowhead.svg" title="enter the save menu" class="dropdown_icon"></imf>
-                    </button>
-                    <div id="save_dropdown" class="popup dropdown_content">
-                        <ul class="nobullet">
-                            <li id="copy_btn" class="dropdown_option noselect">Compile and Copy</li>
-                            <li id="download_btn" class="dropdown_option noselect">Export .OBJ Mesh</li>
-                        </ul>
+                <div id=left_menu class="editor_menu_segment">
+                    <div class="editor_menu dropdown_menu">
+                        <button id="load_btn" class="editor_menubtn dropdown_btn">
+                            Load
+                            <img src="./icons/arrowhead.svg" title="enter the load menu" class="dropdown_icon"></img>
+                        </button>
+                        <div id="load_dropdown" class="popup dropdown_content">
+                            <ul class="nobullet">
+                                <li id="pixelLoader" class="dropdown_option noselect">Pixel...</li>
+                                <li id="modelLoader" class="dropdown_option noselect">Model...</li>
+                            </ul>
+                        </div>
                     </div>
-                </div>
-                <div class="editor_menu">
-                    <button id="reset_btn" class="editor_menubtn">Reset Camera</button>
+                    <div class="editor_menu dropdown_menu">
+                        <button id="save_btn" class="editor_menubtn dropdown_btn">
+                            Save
+                            <img src="./icons/arrowhead.svg" title="enter the save menu" class="dropdown_icon"></imf>
+                        </button>
+                        <div id="save_dropdown" class="popup dropdown_content">
+                            <ul class="nobullet">
+                                <li id="copy_btn" class="dropdown_option noselect"><s>Compile and Copy</s></li>
+                                <li id="download_btn" class="dropdown_option noselect">Export .OBJ Mesh</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="editor_menu">
+                        <button id="reset_btn" class="editor_menubtn"><s>Reset Camera</s></button>
+                    </div>
                 </div>
             </div>
             <div class="editor_body">
@@ -133,6 +141,9 @@
         const blob = new Blob([currentModel.toObjString()], {type:'text/plain'});
         downloadBlob(`${currentModel.name}.obj`, blob);
     }
+
+    textarea.value = "NAME = Gyroscope;\nAUTHOR = FOTTIFOH;\n\nTYPE 0;\ndock, -150, 0, 0, 200, 200;\nrectangle, 0, 0, 0, 200, 200, 1;\ndetail;\nline, 0, -200, 0, 0, 200, 0;\ndetail;\nellipse, 0, 0, 0, 300, 300, 0, 4, EAST-WEST VERT. CIRCLE;\nellipse, 0, 0, 0, 300, 300, 1, 4, HORIZONTAL CIRCLE;\nellipse, 0, 0, 0, 300, 300, 2, 4, NORTH-SOUTH VERT. CIRCLE;\nrectangle, 0, -200, 0, 20, 20, 1, UPPER SQUARE;\nrectangle, 0, 200, 0, 20, 20, 1, LOWER SQUARE;\ndetail;\ndotted ellipse, 0, 0, 0, 50, 50, 0, 10, CIRCULAR THINGY 1;\ndotted ellipse, 0, 0, 0, 50, 50, 1, 10, CIRCULAR THINGY 2;\ndotted ellipse, 0, 0, 0, 50, 50, 2, 10, CIRCULAR THINGY 3;\ntext, -15, 200, -15, 0.8, -1, 90, 0, GYROSCOPE;\ntext, -180, 0, -180, 3, -3, 90, 0, DOCK_HERE_PLEASE;\ntext, -15, -200, 0, 1, -1, 90, 0, %d;\ntotal mass, 40000;\nendpixel;";
+    runDefinition();
 
     editor_btn.addEventListener("click", runDefinition);
     download_btn.addEventListener("click", downloadOBJ);
