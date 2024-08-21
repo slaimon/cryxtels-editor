@@ -60,7 +60,6 @@ I made a couple extensions to the original language in order to make it easier t
 There are a lot of problems big and small that I'd like to fix if I had the time:
 * An obvious issue with the tool is it doesn't display dot primitives, like `sphere`. This is an intrinsic limitation of using o3dv.
 * Error messages are output to the browser console where they aren't visible if you don't have developer tools open.
-* "Reset Camera" button doesn't do anything, it's just a placeholder.
 * The camera is reset every time you reload the object by pressing "Draw".
 * Pressing a button every time you edit the code shouldn't even be required, it should refresh automatically.
 * When you download an OBJ file, the spaceship is saved as well. I want to add a setting to disable this.
@@ -73,6 +72,7 @@ Furthermore, the interface is still crude. There are two major changes I'd like 
 
 Other features that I'd like to add in the future:
 * The original language has support for level-of-detail control. It would be cool to emulate this in the viewer.
+* Add a "compiler": this would translate the code to the subset of the language that is compatible with the original game, by performing all necessary substitutions and arithmetic calculations.
 * Some game assets aren't written in the Pixel definition language, but rather are stored in the source code as arrays of floats. My tool already has support for interpreting this kind of data (it's implemented by a subclass of Shape called Link in `primitives.js`), but the language still lacks an extension to access this feature.
 
 ## Aknowledgements
