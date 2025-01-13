@@ -12,6 +12,7 @@
     --button-active: #666666;
     --dropdown-bg: #3d435a;
     --dropdown-element-active: #4d536a;
+    --hyperlink: #f195e9;
 }
 
 /* Reset styles */
@@ -25,6 +26,10 @@ html, body {
     height: 100%;
     width: 100%;
     background-color: var(--page-bg);
+}
+
+a {
+    color: var(--hyperlink);
 }
 
 div.main {
@@ -104,6 +109,8 @@ div.editor_menu_segment {
     color: var(--page-text);
     background-color: var(--page-bg);
     border-color: var(--lines-text);
+
+    cursor: pointer;
 }
 
 .editor_body {
@@ -136,6 +143,8 @@ div.editor_menu_segment {
     letter-spacing: 1px;
     border: none;
     margin-top: 1em;
+
+    cursor: pointer;
 }
 .editor_btn:hover {
     background-color: var(--button-active);
@@ -199,6 +208,8 @@ div.editor_menu_segment {
     border: 1px solid var(--lines-text);
     border-radius: 3px;
     z-index: 1;
+
+    cursor: pointer;
 }
 
 .dropdown_option {
@@ -268,6 +279,15 @@ div.editor_menu_segment {
 .popup_window button {
     display: block;
     margin: 0 auto;
+}
+
+.popup div {
+    height: 90%;
+    overflow-y: scroll;
+}
+
+.popup_text_area {
+    padding: 25px 10px 25px 10px;
 }
 
 .selector_options {
