@@ -85,6 +85,20 @@ div.editor_menu_segment {
     margin: 5px 1px;
 }
 
+div.message_box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    color: var(--page-text);
+    padding: 16px;
+    text-decoration: none;
+
+    font-family: monospace;
+    text-align: left;
+}
+
 .editor_menu {
     width: min-content;
 
